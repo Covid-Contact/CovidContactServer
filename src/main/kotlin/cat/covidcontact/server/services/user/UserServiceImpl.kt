@@ -44,5 +44,13 @@ class UserServiceImpl(
         verificationRepository.delete(verification)
     }
 
+    override fun isValidated(email: String): Boolean {
+        println(email)
+        val user = applicationUserRepository.findByEmail(email)
+            ?: throw UserException.UserNotExisting()
+
+        return user.isVerified
+    }
+
     private fun generateRandomCode() = List(codeLength) { charset.random() }.joinToString("")
 }

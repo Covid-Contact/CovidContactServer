@@ -6,4 +6,6 @@ interface UserService {
     fun createUser(applicationUser: ApplicationUser)
 
     fun validateUser(validateId: String)
+
+    fun isValidated(email: String): Boolean
 }

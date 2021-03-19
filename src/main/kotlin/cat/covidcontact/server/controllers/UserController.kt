@@ -27,4 +27,12 @@ class UserController(
     } catch (e: UserException.InvalidId) {
         ResponseEntity<String>("The id is invalid", HttpStatus.BAD_REQUEST)
     }
+
+    @GetMapping(UserControllerUrls.VALIDATED)
+    fun isValid(@RequestParam email: String) = try {
+        val result = userService.isValidated(email)
+        ResponseEntity<Boolean>(result, HttpStatus.OK)
+    } catch (e: UserException.UserNotExisting) {
+        ResponseEntity<String>("User not existing", HttpStatus.BAD_REQUEST)
+    }
 }

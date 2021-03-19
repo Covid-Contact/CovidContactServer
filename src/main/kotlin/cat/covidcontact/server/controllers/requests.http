@@ -40,3 +40,8 @@ Content-Type: application/json
   "email": "apintogil@gmail.com",
   "password": "Barcelona2020$"
 }
+
+###
+
+GET http://covidcontact.cat:8080/user/validated?email=apintogil@gmail.com
+

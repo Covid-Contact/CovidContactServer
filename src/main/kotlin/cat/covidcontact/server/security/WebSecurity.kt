@@ -36,7 +36,8 @@ class WebSecurity(
             .permitAll()
             .antMatchers(
                 HttpMethod.GET,
-                UserControllerUrls.BASE + UserControllerUrls.VALIDATE
+                UserControllerUrls.BASE + UserControllerUrls.VALIDATE,
+                UserControllerUrls.BASE + UserControllerUrls.VALIDATED
             )
             .permitAll()
             .anyRequest().authenticated()
