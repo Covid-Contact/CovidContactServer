@@ -21,6 +21,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
     implementation("org.springframework.boot:spring-boot-starter-mail:2.4.2")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -30,7 +31,6 @@ dependencies {
     implementation("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.cat.covidcontact.server.security:spring-cat.covidcontact.server.security-test")
 }
 
 tasks.withType<KotlinCompile> {

@@ -1,4 +1,4 @@
-package cat.covidcontact.server.data
+package cat.covidcontact.server.data.applicationuser
 
 import javax.persistence.*
 
