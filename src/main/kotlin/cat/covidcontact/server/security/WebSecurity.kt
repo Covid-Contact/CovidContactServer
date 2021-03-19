@@ -32,6 +32,10 @@ class WebSecurity(
                 HttpMethod.POST,
                 UserControllerUrls.BASE + UserControllerUrls.SIGN_UP,
                 UserControllerUrls.BASE + UserControllerUrls.LOG_IN,
+            )
+            .permitAll()
+            .antMatchers(
+                HttpMethod.GET,
                 UserControllerUrls.BASE + UserControllerUrls.VALIDATE
             )
             .permitAll()

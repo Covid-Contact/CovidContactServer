@@ -7,7 +7,6 @@ import cat.covidcontact.server.data.verification.Verification
 import cat.covidcontact.server.data.verification.VerificationRepository
 import cat.covidcontact.server.services.email.EmailService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import kotlin.random.Random
 
 class UserServiceImpl(
     private val applicationUserRepository: ApplicationUserRepository,
@@ -15,6 +14,9 @@ class UserServiceImpl(
     private val verificationRepository: VerificationRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
+
+    private val codeLength = 50
+    private val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
     override fun createUser(applicationUser: ApplicationUser) {
         applicationUser.password = bCryptPasswordEncoder.encode(applicationUser.password)
@@ -25,8 +27,8 @@ class UserServiceImpl(
         }
 
         val user = applicationUserRepository.save(applicationUser)
-        val code = (Random.nextBits(32).toString() + user.email).hashCode()
-        val verification = Verification(user.id, code.toString())
+        val code = generateRandomCode()
+        val verification = Verification(user.id, code)
         verificationRepository.save(verification)
 
         emailService.sendConfirmationEmail(applicationUser.email, code)
@@ -41,4 +43,6 @@ class UserServiceImpl(
         applicationUserRepository.save(applicationUser)
         verificationRepository.delete(verification)
     }
+
+    private fun generateRandomCode() = List(codeLength) { charset.random() }.joinToString("")
 }

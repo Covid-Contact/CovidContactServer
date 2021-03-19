@@ -16,8 +16,6 @@ class UserDetailServiceImpl(
         val applicationUser = applicationUserRepository.findByEmail(email)
             ?: throw UsernameNotFoundException(email)
 
-        println("HERE")
-
         return User(applicationUser.email, applicationUser.password, emptyList())
     }
 }

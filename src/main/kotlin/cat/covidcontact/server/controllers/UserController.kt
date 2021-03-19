@@ -20,10 +20,10 @@ class UserController(
         ResponseEntity<String>("The user already exists", HttpStatus.BAD_REQUEST)
     }
 
-    @PostMapping(UserControllerUrls.VALIDATE)
-    fun validate(@PathVariable validateId: String) = try {
-        userService.validateUser(validateId)
-        ResponseEntity<String>(HttpStatus.OK)
+    @GetMapping(UserControllerUrls.VALIDATE)
+    fun validate(@RequestParam(required = true) code: String) = try {
+        userService.validateUser(code)
+        ResponseEntity<String>("You can now log in", HttpStatus.OK)
     } catch (e: UserException.InvalidId) {
         ResponseEntity<String>("The id is invalid", HttpStatus.BAD_REQUEST)
     }
