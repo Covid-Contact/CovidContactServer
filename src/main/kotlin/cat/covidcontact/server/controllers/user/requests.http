@@ -1,0 +1,62 @@
+POST http://localhost:8080/user/signup
+Content-Type: application/json
+
+{
+  "email": "apintogil@gmail.com",
+  "password": "Barcelona2020$"
+}
+
+###
+
+GET http://localhost:8080/user/validate?code=lTpZBwcml3mvDn4OdDHWIjARUfqYHNiArc8JRvSvpTe5eXrAIb
+
+
+###
+
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{
+  "email": "apintogil@gmail.com",
+  "password": "Barcelona2020$"
+}
+
+###
+
+POST http://covidcontact.cat:8080/user/signup
+Content-Type: application/json
+
+{
+  "email": "apintogil@gmail.com",
+  "password": "Barcelona2020$"
+}
+
+###
+
+POST http://covidcontact.cat:8080/user/login
+Content-Type: application/json
+
+{
+  "email": "apintogil@gmail.com",
+  "password": "Barcelona2020$"
+}
+
+###
+
+GET http://covidcontact.cat:8080/user/validated?email=apintogil@gmail.com
+
+###
+
+GET http://covidcontact.cat:8080/user/hello2
+
+###
+GET http://covidcontact.cat:8080/user/hello
+Content-Type: application/json
+
+{
+  "username": "apintogil@gmail.com",
+  "password": "Barcelona2020$"
+}
+
+### Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+
