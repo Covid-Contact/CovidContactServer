@@ -3,8 +3,12 @@ package cat.covidcontact.server.services
 import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
 import cat.covidcontact.server.data.user.UserRepository
 import cat.covidcontact.server.data.verification.VerificationRepository
+import cat.covidcontact.server.services.applicationuser.ApplicationUserService
+import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
 import cat.covidcontact.server.services.email.EmailService
 import cat.covidcontact.server.services.email.EmailServiceImpl
+import cat.covidcontact.server.services.user.NumberCalculatorService
+import cat.covidcontact.server.services.user.NumberCalculatorServiceImpl
 import cat.covidcontact.server.services.user.UserService
 import cat.covidcontact.server.services.user.UserServiceImpl
 import org.springframework.beans.factory.annotation.Qualifier
@@ -17,19 +21,28 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 class ServiceProviders {
 
     @Bean
-    fun provideUserService(
+    fun provideApplicationUserService(
         emailService: EmailService,
         applicationUserRepository: ApplicationUserRepository,
         verificationRepository: VerificationRepository,
-        userRepository: UserRepository,
         bCryptPasswordEncoder: BCryptPasswordEncoder
-    ): UserService = UserServiceImpl(
+    ): ApplicationUserService = ApplicationUserServiceImpl(
         emailService,
         applicationUserRepository,
         verificationRepository,
-        userRepository,
         bCryptPasswordEncoder
     )
+
+    @Bean
+    fun provideUserService(
+        userRepository: UserRepository,
+        numberCalculatorService: NumberCalculatorService
+    ): UserService = UserServiceImpl(
+        userRepository, numberCalculatorService
+    )
+
+    @Bean
+    fun provideNumberCalculatorService(): NumberCalculatorService = NumberCalculatorServiceImpl()
 
     @Bean
     fun provideEmailService(

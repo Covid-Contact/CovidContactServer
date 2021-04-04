@@ -12,7 +12,7 @@ data class User(
     val email: String,
 
     @SerializedName("username")
-    val username: String,
+    var username: String,
 
     @SerializedName("gender")
     val gender: Gender,
