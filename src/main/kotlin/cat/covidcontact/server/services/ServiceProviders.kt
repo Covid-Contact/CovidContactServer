@@ -1,6 +1,7 @@
 package cat.covidcontact.server.services
 
 import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
+import cat.covidcontact.server.data.user.UserRepository
 import cat.covidcontact.server.data.verification.VerificationRepository
 import cat.covidcontact.server.services.email.EmailService
 import cat.covidcontact.server.services.email.EmailServiceImpl
@@ -17,14 +18,16 @@ class ServiceProviders {
 
     @Bean
     fun provideUserService(
-        applicationUserRepository: ApplicationUserRepository,
         emailService: EmailService,
+        applicationUserRepository: ApplicationUserRepository,
         verificationRepository: VerificationRepository,
+        userRepository: UserRepository,
         bCryptPasswordEncoder: BCryptPasswordEncoder
     ): UserService = UserServiceImpl(
-        applicationUserRepository,
         emailService,
+        applicationUserRepository,
         verificationRepository,
+        userRepository,
         bCryptPasswordEncoder
     )
 

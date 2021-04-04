@@ -6,4 +6,5 @@ object UserControllerUrls {
     const val SIGN_UP = "/signup"
     const val VALIDATE = "/validate"
     const val VALIDATED = "/validated"
+    const val USER_INFO = "/userinfo"
 }

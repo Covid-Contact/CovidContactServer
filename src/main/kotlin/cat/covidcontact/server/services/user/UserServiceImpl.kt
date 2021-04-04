@@ -3,15 +3,18 @@ package cat.covidcontact.server.services.user
 import cat.covidcontact.server.controllers.user.UserExceptions
 import cat.covidcontact.server.data.applicationuser.ApplicationUser
 import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
+import cat.covidcontact.server.data.user.User
+import cat.covidcontact.server.data.user.UserRepository
 import cat.covidcontact.server.data.verification.Verification
 import cat.covidcontact.server.data.verification.VerificationRepository
 import cat.covidcontact.server.services.email.EmailService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 class UserServiceImpl(
-    private val applicationUserRepository: ApplicationUserRepository,
     private val emailService: EmailService,
+    private val applicationUserRepository: ApplicationUserRepository,
     private val verificationRepository: VerificationRepository,
+    private val userRepository: UserRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
 
@@ -49,6 +52,10 @@ class UserServiceImpl(
             ?: throw UserExceptions.userNotExistingException
 
         return user.isVerified
+    }
+
+    override fun addUserInfo(user: User) {
+        userRepository.save(user)
     }
 
     private fun generateRandomCode() = List(codeLength) { charset.random() }.joinToString("")

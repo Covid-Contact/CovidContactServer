@@ -3,6 +3,7 @@ package cat.covidcontact.server.controllers.user
 import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
 import cat.covidcontact.server.data.applicationuser.ApplicationUser
+import cat.covidcontact.server.data.user.User
 import cat.covidcontact.server.services.user.UserService
 import org.springframework.web.bind.annotation.*
 
@@ -26,5 +27,10 @@ class UserController(
     @GetMapping(UserControllerUrls.VALIDATED)
     fun isValid(@RequestParam email: String) = runGet {
         userService.isValidated(email)
+    }
+
+    @PostMapping(UserControllerUrls.USER_INFO)
+    fun addUserInfo(@RequestBody user: User) = runPost {
+        userService.addUserInfo(user)
     }
 }
