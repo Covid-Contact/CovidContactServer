@@ -1,6 +1,6 @@
 package cat.covidcontact.server.services.user
 
-import cat.covidcontact.server.controllers.UserException
+import cat.covidcontact.server.controllers.user.UserExceptions
 import cat.covidcontact.server.data.applicationuser.ApplicationUser
 import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
 import cat.covidcontact.server.data.verification.Verification
@@ -23,7 +23,7 @@ class UserServiceImpl(
         val userFound = applicationUserRepository.findByEmail(applicationUser.email)
 
         if (userFound != null) {
-            throw UserException.UserExisting()
+            throw UserExceptions.userExistingException
         }
 
         val user = applicationUserRepository.save(applicationUser)
@@ -36,7 +36,7 @@ class UserServiceImpl(
 
     override fun validateUser(validateId: String) {
         val verification = verificationRepository.findByCode(validateId)
-            ?: throw UserException.InvalidId()
+            ?: throw UserExceptions.invalidIdException
 
         val applicationUser = applicationUserRepository.findById(verification.id).get()
         applicationUser.isVerified = true
@@ -45,9 +45,8 @@ class UserServiceImpl(
     }
 
     override fun isValidated(email: String): Boolean {
-        println(email)
         val user = applicationUserRepository.findByEmail(email)
-            ?: throw UserException.UserNotExisting()
+            ?: throw UserExceptions.userNotExistingException
 
         return user.isVerified
     }

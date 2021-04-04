@@ -1,4 +1,4 @@
-package cat.covidcontact.server.controllers
+package cat.covidcontact.server.controllers.user
 
 sealed class UserException : Exception() {
     class UserExisting : UserException()

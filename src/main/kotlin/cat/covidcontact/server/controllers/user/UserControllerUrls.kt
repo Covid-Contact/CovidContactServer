@@ -1,4 +1,4 @@
-package cat.covidcontact.server.controllers
+package cat.covidcontact.server.controllers.user
 
 object UserControllerUrls {
     const val BASE = "/user"

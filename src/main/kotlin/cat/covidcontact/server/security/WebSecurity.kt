@@ -1,6 +1,6 @@
 package cat.covidcontact.server.security
 
-import cat.covidcontact.server.controllers.UserControllerUrls
+import cat.covidcontact.server.controllers.user.UserControllerUrls
 import cat.covidcontact.server.services.UserDetailServiceImpl
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod
@@ -31,7 +31,7 @@ class WebSecurity(
             .antMatchers(
                 HttpMethod.POST,
                 UserControllerUrls.BASE + UserControllerUrls.SIGN_UP,
-                UserControllerUrls.BASE + UserControllerUrls.LOG_IN,
+                UserControllerUrls.BASE + UserControllerUrls.LOG_IN
             )
             .permitAll()
             .antMatchers(
