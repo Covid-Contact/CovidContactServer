@@ -10,6 +10,10 @@ class UserServiceImpl(
 ) : UserService {
 
     override fun addUserData(user: User) {
+        if (userRepository.existsUserByEmail(user.email)) {
+            throw UserExceptions.userDataFound
+        }
+
         val usernameNumber = numberCalculatorService.generateUsernameNumber()
         user.username = "${user.username}#$usernameNumber"
         userRepository.save(user)

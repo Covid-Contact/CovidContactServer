@@ -9,4 +9,10 @@ object UserExceptions {
         "User data not found",
         HttpStatus.NOT_FOUND
     )
+
+    val userDataFound = CovidContactException(
+        "U2",
+        "User data found",
+        HttpStatus.BAD_REQUEST
+    )
 }

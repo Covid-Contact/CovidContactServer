@@ -93,3 +93,23 @@ Content-Type: application/json
 ###
 GET http://localhost:8080/user/userinfo?email=apintogil@gmail.com
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+
+###
+POST http://localhost:8080/user/userdevice?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+Content-Type: application/json
+
+{
+  "id": "1234",
+  "name": "Albert22"
+}
+
+###
+POST http://localhost:8080/user/userdevice?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+Content-Type: application/json
+
+{
+  "id": "5678",
+  "name": "Albert33"
+}
