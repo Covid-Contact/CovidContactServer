@@ -34,7 +34,7 @@ class AuthorizationFilter(
     private fun getAuthentication(
         request: HttpServletRequest
     ): UsernamePasswordAuthenticationToken? {
-        val token: String? = request.getHeader(SecurityConstants.HEADER_STRING)
+        val token: String? = request.getAuthenticationHeader()
         return token?.let {
             val parser = Jwt.Parser(
                 token = it,
@@ -50,4 +50,8 @@ class AuthorizationFilter(
             }
         }
     }
+
+    private fun HttpServletRequest.getAuthenticationHeader(): String? =
+        getHeader(SecurityConstants.HEADER_STRING)
+            ?.substring(SecurityConstants.TOKEN_PREFIX.length)
 }
