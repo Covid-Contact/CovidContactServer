@@ -5,4 +5,6 @@ import cat.covidcontact.server.post.PostContactNetwork
 
 interface ContactNetworkService {
     fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork
+
+    fun getContactNetworksFromUser(email: String): List<ContactNetwork>
 }

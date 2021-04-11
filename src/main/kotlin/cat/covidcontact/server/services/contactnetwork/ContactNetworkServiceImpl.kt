@@ -4,6 +4,7 @@ import cat.covidcontact.server.controllers.contactnetwork.ContactNetworkExceptio
 import cat.covidcontact.server.controllers.user.UserExceptions
 import cat.covidcontact.server.data.contactnetwork.ContactNetwork
 import cat.covidcontact.server.data.contactnetwork.ContactNetworkRepository
+import cat.covidcontact.server.data.user.Member
 import cat.covidcontact.server.data.user.User
 import cat.covidcontact.server.data.user.UserRepository
 import cat.covidcontact.server.post.PostContactNetwork
@@ -14,18 +15,16 @@ class ContactNetworkServiceImpl(
     private val userRepository: UserRepository,
     private val numberCalculatorService: NumberCalculatorService
 ) : ContactNetworkService {
+
     override fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork {
         var createdContactNetwork: ContactNetwork? = null
         postContactNetwork.ownerEmail?.let { ownerEmail ->
             val user = userRepository.findByEmail(ownerEmail)
 
             user?.let { owner ->
-                val existsContactNetwork =
-                    contactNetworkRepository.existsContactNetworkByOwnerEmailAndNameStartingWith(
-                        ownerEmail,
-                        postContactNetwork.name
-                    )
-                if (existsContactNetwork) {
+                val contactNetworkExistsForUser = user.contactNetworks
+                    .find { it.contactNetwork.name.startsWith(postContactNetwork.name) } != null
+                if (contactNetworkExistsForUser) {
                     throw ContactNetworkExceptions.contactNetworkFoundForUser
                 }
                 createdContactNetwork = createContactNetwork(postContactNetwork, owner)
@@ -33,6 +32,12 @@ class ContactNetworkServiceImpl(
         } ?: throw ContactNetworkExceptions.ownerEmailNotFound
 
         return createdContactNetwork!!
+    }
+
+    override fun getContactNetworksFromUser(email: String): List<ContactNetwork> {
+        val user = userRepository.findByEmail(email)
+        return user?.contactNetworks?.map { it.contactNetwork }
+            ?: throw UserExceptions.userDataNotFound
     }
 
     private fun createContactNetwork(
@@ -43,11 +48,12 @@ class ContactNetworkServiceImpl(
         val contactNetwork = ContactNetwork(
             name = "${postContactNetwork.name}#$code",
             password = postContactNetwork.password,
-            owner = owner,
-            members = listOf(owner)
+            //owner = owner
         )
 
-        contactNetworkRepository.save(contactNetwork)
+        //contactNetworkRepository.save(contactNetwork)
+        owner.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
+        userRepository.save(owner)
         return contactNetwork
     }
 }

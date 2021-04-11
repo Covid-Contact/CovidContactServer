@@ -22,3 +22,7 @@ Content-Type: application/json
   "owner_username": "AlbertPG#6773"
 }
 
+###
+GET http://localhost:8080/contactnetwork/?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4MjE4NjcxMTM0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.JME2eFnfjQKWnKfXmKyH_EHz-o83Zd5MFWPJ40jEhUHI8StajeqsJe7TZG7QFsgondLkD5hlh51u8HLtK70gMw==
+

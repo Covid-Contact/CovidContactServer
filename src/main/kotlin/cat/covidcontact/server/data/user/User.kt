@@ -1,43 +1,25 @@
 package cat.covidcontact.server.data.user
 
-import com.google.gson.annotations.SerializedName
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Relationship
 import java.io.Serializable
 
 @Node
 data class User(
-    @SerializedName("email")
     @Id
     val email: String,
-
-    @SerializedName("username")
     var username: String,
-
-    @SerializedName("gender")
     val gender: Gender,
-
-    @SerializedName("birth_date")
     val birthDate: Long,
-
-    @SerializedName("city")
     var city: String? = null,
-
-    @SerializedName("studies")
     var studies: String? = null,
-
-    @SerializedName("occupation")
     var occupation: Occupation? = null,
-
-    @SerializedName("marriage")
     var marriage: Marriage? = null,
-
-    @SerializedName("children")
     var children: Int? = null,
-
-    @SerializedName("has_been_positive")
     var hasBeenPositive: Boolean? = null,
+    var isVaccinated: Boolean? = null,
 
-    @SerializedName("is_vaccinated")
-    var isVaccinated: Boolean? = null
+    @Relationship(type = "MEMBER", direction = Relationship.Direction.OUTGOING)
+    var contactNetworks: MutableList<Member> = mutableListOf()
 ) : Serializable

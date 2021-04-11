@@ -4,7 +4,7 @@ import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
 import cat.covidcontact.server.data.applicationuser.ApplicationUser
 import cat.covidcontact.server.data.device.Device
-import cat.covidcontact.server.data.user.User
+import cat.covidcontact.server.post.PostUser
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.device.DeviceService
 import cat.covidcontact.server.services.user.UserService
@@ -37,13 +37,28 @@ class UserController(
     }
 
     @PostMapping(UserControllerUrls.USER_INFO)
-    fun addUserInfo(@RequestBody user: User) = runPost {
+    fun addUserInfo(@RequestBody user: PostUser) = runPost {
         userService.addUserData(user)
     }
 
     @GetMapping(UserControllerUrls.USER_INFO)
     fun getUserInfo(@RequestParam(required = true) email: String) = runGet {
-        userService.getUserData(email)
+        val user = userService.getUserData(email)
+        with(user) {
+            PostUser(
+                email,
+                username,
+                gender,
+                birthDate,
+                city,
+                studies,
+                occupation,
+                marriage,
+                children,
+                hasBeenPositive,
+                isVaccinated
+            )
+        }
     }
 
     @PostMapping(UserControllerUrls.USER_DEVICE)

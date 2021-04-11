@@ -15,4 +15,10 @@ object ContactNetworkExceptions {
         "The user already has a contact net with that name",
         HttpStatus.BAD_REQUEST
     )
+
+    val emailNotFound = CovidContactException(
+        "CN3",
+        "The email is not found",
+        HttpStatus.NOT_FOUND
+    )
 }
