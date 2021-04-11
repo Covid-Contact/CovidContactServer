@@ -6,5 +6,5 @@ class NumberCalculatorServiceImpl : NumberCalculatorService {
     private val minNumber = 1000
     private val maxNumber = 9999
 
-    override fun generateUsernameNumber() = Random.nextInt(minNumber, maxNumber)
+    override fun generateRandomNumber() = Random.nextInt(minNumber, maxNumber)
 }

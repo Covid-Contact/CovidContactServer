@@ -1,12 +1,15 @@
 package cat.covidcontact.server.services
 
 import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
+import cat.covidcontact.server.data.contactnetwork.ContactNetworkRepository
 import cat.covidcontact.server.data.device.DeviceRepository
 import cat.covidcontact.server.data.user.UserRepository
 import cat.covidcontact.server.data.userdevice.UserDeviceRepository
 import cat.covidcontact.server.data.verification.VerificationRepository
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
+import cat.covidcontact.server.services.contactnetwork.ContactNetworkService
+import cat.covidcontact.server.services.contactnetwork.ContactNetworkServiceImpl
 import cat.covidcontact.server.services.device.DeviceService
 import cat.covidcontact.server.services.device.DeviceServiceImpl
 import cat.covidcontact.server.services.email.EmailService
@@ -78,4 +81,15 @@ class ServiceProviders {
     fun provideUserDeviceService(
         userDeviceRepository: UserDeviceRepository
     ): UserDeviceService = UserDeviceServiceImpl(userDeviceRepository)
+
+    @Bean
+    fun provideContactNetworkService(
+        contactNetworkRepository: ContactNetworkRepository,
+        userRepository: UserRepository,
+        numberCalculatorService: NumberCalculatorService
+    ): ContactNetworkService = ContactNetworkServiceImpl(
+        contactNetworkRepository,
+        userRepository,
+        numberCalculatorService
+    )
 }

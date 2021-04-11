@@ -14,7 +14,7 @@ class UserServiceImpl(
             throw UserExceptions.userDataFound
         }
 
-        val usernameNumber = numberCalculatorService.generateUsernameNumber()
+        val usernameNumber = numberCalculatorService.generateRandomNumber()
         user.username = "${user.username}#$usernameNumber"
         userRepository.save(user)
     }
