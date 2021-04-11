@@ -113,3 +113,46 @@ Content-Type: application/json
   "id": "5678",
   "name": "Albert33"
 }
+
+###
+POST http://covidcontact.cat:8080/user/userinfo
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+Content-Type: application/json
+
+{
+  "email": "apintogil@gmail.com",
+  "username": "AlbertPG",
+  "gender": "Male",
+  "birth_date": 1000,
+  "city": "Barcelona",
+  "studies": "University",
+  "occupation": "Student",
+  "marriage": "Single",
+  "children": 0,
+  "has_been_positive": false,
+  "is_vaccinated": false
+}
+
+###
+GET http://covidcontact.cat:8080/user/userinfo?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+
+###
+POST http://covidcontact.cat:8080/user/userdevice?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+Content-Type: application/json
+
+{
+  "id": "1234",
+  "name": "Albert22"
+}
+
+###
+POST http://covidcontact.cat:8080/user/userdevice?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE3NTU3MTIwOTI3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.Kd_6stq5Xius238k4nk0_Jo2yvOzNFlX9YuGErLec_PYkI1gsmKBJf-TLyQ4fGpRcTbYQR6XY4CNnbTWiCXiCA==
+Content-Type: application/json
+
+{
+  "id": "5678",
+  "name": "Albert33"
+}
