@@ -4,5 +4,5 @@ object ContactNetworkControllerUrls {
     const val BASE = "/contactnetwork"
     const val CREATE_CONTACT_NETWORK = "/"
     const val GET_CONTACT_NETWORKS = "/"
-    const val ENABLE_USER_ADDITION = "/contactnetwork/{name}"
+    const val ENABLE_USER_ADDITION = "/{name}"
 }

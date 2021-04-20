@@ -35,3 +35,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4NTkxM
 ###
 PUT http://localhost:8080/contactnetwork/contactnetwork/VilaTeam%238525?isEnabled=false
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5MDE2ODQ5Njk2Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.VPs_Dth4eu_SN_Wi82XdLTbRgO2m-acOUgHz6ClMAO7XNQKI0RPci8Ux6cZYvGbtNKOUn_spZbX_FzlKdQQpIQ==
+
+###
+PUT http://covidcontact.cat:8080/contactnetwork/VilaTeam%231850?isEnabled=false
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5MDE2ODQ5Njk2Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.VPs_Dth4eu_SN_Wi82XdLTbRgO2m-acOUgHz6ClMAO7XNQKI0RPci8Ux6cZYvGbtNKOUn_spZbX_FzlKdQQpIQ==
