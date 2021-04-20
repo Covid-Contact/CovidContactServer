@@ -1,4 +1,4 @@
-package cat.covidcontact.server.data.user
+package cat.covidcontact.server.data.member
 
 import cat.covidcontact.server.data.contactnetwork.ContactNetwork
 import org.springframework.data.neo4j.core.schema.GeneratedValue

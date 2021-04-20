@@ -4,7 +4,7 @@ import cat.covidcontact.server.controllers.contactnetwork.ContactNetworkExceptio
 import cat.covidcontact.server.controllers.user.UserExceptions
 import cat.covidcontact.server.data.contactnetwork.ContactNetwork
 import cat.covidcontact.server.data.contactnetwork.ContactNetworkRepository
-import cat.covidcontact.server.data.user.Member
+import cat.covidcontact.server.data.member.Member
 import cat.covidcontact.server.data.user.User
 import cat.covidcontact.server.data.user.UserRepository
 import cat.covidcontact.server.post.PostContactNetwork
@@ -40,6 +40,14 @@ class ContactNetworkServiceImpl(
             ?: throw UserExceptions.userDataNotFound
     }
 
+    override fun enableUserAddition(contactNetworkName: String, isEnabled: Boolean) {
+        val contactNetwork = contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+        contactNetwork?.let {
+            it.isVisible = isEnabled
+            contactNetworkRepository.save(contactNetwork)
+        } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
+    }
+
     private fun createContactNetwork(
         postContactNetwork: PostContactNetwork,
         owner: User
@@ -48,10 +56,9 @@ class ContactNetworkServiceImpl(
         val contactNetwork = ContactNetwork(
             name = "${postContactNetwork.name}#$code",
             password = postContactNetwork.password,
-            //owner = owner
+            ownerUsername = owner.username
         )
 
-        //contactNetworkRepository.save(contactNetwork)
         owner.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
         userRepository.save(owner)
         return contactNetwork

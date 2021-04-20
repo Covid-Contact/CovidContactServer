@@ -1,13 +1,15 @@
 ###
 POST http://localhost:8080/contactnetwork/
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4MjE4NjcxMTM0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.JME2eFnfjQKWnKfXmKyH_EHz-o83Zd5MFWPJ40jEhUHI8StajeqsJe7TZG7QFsgondLkD5hlh51u8HLtK70gMw==
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5MDE2ODQ5Njk2Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.VPs_Dth4eu_SN_Wi82XdLTbRgO2m-acOUgHz6ClMAO7XNQKI0RPci8Ux6cZYvGbtNKOUn_spZbX_FzlKdQQpIQ==
 Content-Type: application/json
 
 {
   "name": "VilaTeam",
   "password": "1234",
   "owner_email": "apintogil@gmail.com",
-  "owner_username": "AlbertPG#6773"
+  "owner_username": "AlbertPG#7278",
+  "is_visible": false,
+  "is_password_protected": true
 }
 
 ###
@@ -24,5 +26,12 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8080/contactnetwork/?email=apintogil@gmail.com
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4MjE4NjcxMTM0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.JME2eFnfjQKWnKfXmKyH_EHz-o83Zd5MFWPJ40jEhUHI8StajeqsJe7TZG7QFsgondLkD5hlh51u8HLtK70gMw==
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4NTkyNjAzODU5Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.DJt2O2ufrdkwZvDnXzN8NudbvAj0PzPKd6amBw0hWrRPmcdyW7sUBUlhNhTMbYVU_igP0PUXKNqVEcAAN7aNKg==
 
+###
+GET http://covidcontact.cat:8080/contactnetwork/?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4NTkxMTEzMTkwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.CfINqk-3N4oNEXGhgDrkb3zxr7q-JWO12_txXIUk3eUMFykJGc1pJN0Qag3mtKOLgNl_YjL_mluncuxhhnAIrA==
+
+###
+PUT http://localhost:8080/contactnetwork/contactnetwork/VilaTeam%238525?isEnabled=false
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5MDE2ODQ5Njk2Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.VPs_Dth4eu_SN_Wi82XdLTbRgO2m-acOUgHz6ClMAO7XNQKI0RPci8Ux6cZYvGbtNKOUn_spZbX_FzlKdQQpIQ==

@@ -7,5 +7,8 @@ import org.springframework.data.neo4j.core.schema.Node
 data class ContactNetwork(
     @Id
     var name: String,
-    var password: String? = null
+    var password: String? = null,
+    var ownerUsername: String? = null,
+    var isVisible: Boolean = true,
+    var isPasswordProtected: Boolean = true
 )

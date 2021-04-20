@@ -7,4 +7,6 @@ interface ContactNetworkService {
     fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork
 
     fun getContactNetworksFromUser(email: String): List<ContactNetwork>
+
+    fun enableUserAddition(contactNetworkName: String, isEnabled: Boolean)
 }

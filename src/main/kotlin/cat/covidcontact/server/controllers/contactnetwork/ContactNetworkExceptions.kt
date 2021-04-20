@@ -21,4 +21,10 @@ object ContactNetworkExceptions {
         "The email is not found",
         HttpStatus.NOT_FOUND
     )
+
+    val contactNetworkNotExisting = CovidContactException(
+        "CN4",
+        "The contact network does not exist",
+        HttpStatus.NOT_FOUND
+    )
 }

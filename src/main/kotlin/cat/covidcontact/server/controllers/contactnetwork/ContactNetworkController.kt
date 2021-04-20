@@ -2,6 +2,7 @@ package cat.covidcontact.server.controllers.contactnetwork
 
 import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
+import cat.covidcontact.server.controllers.runPut
 import cat.covidcontact.server.post.PostContactNetwork
 import cat.covidcontact.server.services.contactnetwork.ContactNetworkService
 import org.springframework.web.bind.annotation.*
@@ -18,6 +19,9 @@ class ContactNetworkController(
         PostContactNetwork(
             name = contactNetwork.name,
             password = contactNetwork.password,
+            ownerUsername = contactNetwork.ownerUsername,
+            isVisible = contactNetwork.isVisible,
+            isPasswordProtected = contactNetwork.isPasswordProtected
         )
     }
 
@@ -27,8 +31,20 @@ class ContactNetworkController(
         contactNetworks.map { contactNetwork ->
             PostContactNetwork(
                 name = contactNetwork.name,
-                password = contactNetwork.password
+                password = contactNetwork.password,
+                ownerUsername = contactNetwork.ownerUsername,
+                isVisible = contactNetwork.isVisible,
+                isPasswordProtected = contactNetwork.isPasswordProtected
             )
         }
+    }
+
+    @PutMapping(ContactNetworkControllerUrls.ENABLE_USER_ADDITION)
+    fun enableUserAddition(
+        @PathVariable("name") name: String,
+        @RequestParam(required = true) isEnabled: Boolean
+    ) = runPut {
+        val contactNetworkName = name.replace("%23", "#").replace("%20", " ")
+        contactNetworkService.enableUserAddition(contactNetworkName, isEnabled)
     }
 }

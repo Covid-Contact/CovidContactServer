@@ -7,9 +7,9 @@ fun runGet(method: () -> Any?) = runRequest(HttpStatus.OK, method)
 
 fun runPost(method: () -> Any?) = runRequest(HttpStatus.CREATED, method)
 
-fun runPut(method: () -> Any?) = runRequest(HttpStatus.ACCEPTED, method)
+fun runPut(method: () -> Any?) = runRequest(HttpStatus.NO_CONTENT, method)
 
-fun runDelete(method: () -> Any?) = runRequest(HttpStatus.ACCEPTED, method)
+fun runDelete(method: () -> Any?) = runRequest(HttpStatus.NO_CONTENT, method)
 
 fun runRequest(status: HttpStatus, method: () -> Any?) = try {
     val result = method()
