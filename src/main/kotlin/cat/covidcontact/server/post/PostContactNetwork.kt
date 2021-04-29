@@ -17,9 +17,12 @@ data class PostContactNetwork(
     var ownerUsername: String? = null,
 
     @JsonProperty("is_visible")
-    val isVisible: Boolean = true,
+    var isVisible: Boolean = true,
 
     @JsonProperty("is_password_protected")
-    val isPasswordProtected: Boolean = true
+    var isPasswordProtected: Boolean = true,
+
+    @JsonProperty("acces_code")
+    var accessCode: String? = null
 
 ) : Serializable

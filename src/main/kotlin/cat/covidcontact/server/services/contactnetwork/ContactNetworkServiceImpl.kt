@@ -48,6 +48,20 @@ class ContactNetworkServiceImpl(
         } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
     }
 
+    override fun generateAccessCode(contactNetworkName: String): String {
+        val contactNetwork = contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+        return contactNetwork?.let { network ->
+            var accessCode = numberCalculatorService.generateAccessCode()
+            while (contactNetworkRepository.existsContactNetworkByAccessCode(accessCode)) {
+                accessCode = numberCalculatorService.generateAccessCode()
+            }
+
+            network.accessCode = accessCode
+            contactNetworkRepository.save(network)
+            accessCode
+        } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
+    }
+
     private fun createContactNetwork(
         postContactNetwork: PostContactNetwork,
         owner: User

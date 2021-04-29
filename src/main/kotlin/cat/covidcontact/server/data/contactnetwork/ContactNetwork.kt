@@ -10,5 +10,6 @@ data class ContactNetwork(
     var password: String? = null,
     var ownerUsername: String? = null,
     var isVisible: Boolean = true,
-    var isPasswordProtected: Boolean = true
+    var isPasswordProtected: Boolean = true,
+    var accessCode: String? = null
 )

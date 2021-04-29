@@ -9,4 +9,6 @@ interface ContactNetworkService {
     fun getContactNetworksFromUser(email: String): List<ContactNetwork>
 
     fun enableUserAddition(contactNetworkName: String, isEnabled: Boolean)
+
+    fun generateAccessCode(contactNetworkName: String): String
 }

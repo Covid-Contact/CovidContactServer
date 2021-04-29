@@ -5,4 +5,5 @@ object ContactNetworkControllerUrls {
     const val CREATE_CONTACT_NETWORK = "/"
     const val GET_CONTACT_NETWORKS = "/"
     const val ENABLE_USER_ADDITION = "/{name}"
+    const val GENERATE_ACCESS_CODE = "/{name}/generateAccessCode"
 }

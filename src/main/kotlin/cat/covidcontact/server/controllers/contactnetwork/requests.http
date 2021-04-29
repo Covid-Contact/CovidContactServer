@@ -30,7 +30,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4NTkyN
 
 ###
 GET http://covidcontact.cat:8080/contactnetwork/?email=apintogil@gmail.com
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4NTkxMTEzMTkwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.CfINqk-3N4oNEXGhgDrkb3zxr7q-JWO12_txXIUk3eUMFykJGc1pJN0Qag3mtKOLgNl_YjL_mluncuxhhnAIrA==
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5MDI1NjcxMjU1Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.vbmDB_K6YWawpQPSNJi6N114CO6RM-JMexqlrhYjDk-3kzMvyBmen2F6exWp-rB8kIhhq7rTVkuWiHrqwdQXEQ==
 
 ###
 PUT http://localhost:8080/contactnetwork/contactnetwork/VilaTeam%238525?isEnabled=false
@@ -39,3 +39,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5MDE2O
 ###
 PUT http://covidcontact.cat:8080/contactnetwork/VilaTeam%231850?isEnabled=false
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5MDE2ODQ5Njk2Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.VPs_Dth4eu_SN_Wi82XdLTbRgO2m-acOUgHz6ClMAO7XNQKI0RPci8Ux6cZYvGbtNKOUn_spZbX_FzlKdQQpIQ==
+
+###
+PUT http://localhost:8080/contactnetwork/VilaTeam%231850/generateAccessCode
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5NzkzOTQ2ODAwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.tHaKn57mLnlDVJtTdo9pC7x2UdonJMe9gAnBw81bVIlRIO693zVYzrEy89kypvg5YEPDxf9DVT2FdPItCpC5UQ==
