@@ -33,4 +33,10 @@ object ContactNetworkExceptions {
         "The access code is invalid,",
         HttpStatus.NOT_FOUND
     )
+
+    val userAlreadyJoined = CovidContactException(
+        "CN6",
+        "The user has already joined this contact network",
+        HttpStatus.BAD_REQUEST
+    )
 }

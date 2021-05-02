@@ -67,6 +67,26 @@ class ContactNetworkServiceImpl(
         return contactNetwork ?: throw ContactNetworkExceptions.invalidAccessCode
     }
 
+    override fun joinContactNetwork(contactNetworkName: String, email: String) {
+        val user = userRepository.findByEmail(email)
+        user?.let { currentUser ->
+            val member = currentUser.contactNetworks.find {
+                it.contactNetwork.name == contactNetworkName
+            }
+
+            if (member != null) {
+                throw ContactNetworkExceptions.userAlreadyJoined
+            }
+
+            val contactNetwork =
+                contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+            contactNetwork?.let { currentContactNetwork ->
+                currentUser.contactNetworks.add(Member(contactNetwork = currentContactNetwork))
+                userRepository.save(currentUser)
+            } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
+        } ?: throw UserExceptions.userDataNotFound
+    }
+
     private fun createContactNetwork(
         postContactNetwork: PostContactNetwork,
         owner: User

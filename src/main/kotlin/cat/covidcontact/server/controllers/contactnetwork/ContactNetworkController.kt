@@ -49,6 +49,15 @@ class ContactNetworkController(
         contactNetwork.toPost()
     }
 
+    @PutMapping(ContactNetworkControllerUrls.JOIN_CONTACT_NETWORK)
+    fun joinContactNetwork(
+        @PathVariable("name") name: String,
+        @RequestParam(required = true) email: String
+    ) = runPut {
+        val contactNetworkName = parseContactNetworkName(name)
+        contactNetworkService.joinContactNetwork(contactNetworkName, email)
+    }
+
     private fun parseContactNetworkName(name: String) =
         name.replace("%23", "#").replace("%20", " ")
 

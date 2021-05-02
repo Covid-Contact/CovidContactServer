@@ -48,3 +48,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE5NzkzO
 GET http://localhost:8080/contactnetwork/accessCode?code=222857
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIwMDE5ODQ3NjQwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.hRfdyd6V4MgfeI78QqlDX7puwspiv-6gwbKunH_X7TD6DFhRLDQvQw0__2wY3G4lAVygLUpskrHzBVbOSh2NSA==
 
+###
+PUT http://localhost:8080/contactnetwork/Fibers%231012/join?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIwMDE5ODQ3NjQwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.hRfdyd6V4MgfeI78QqlDX7puwspiv-6gwbKunH_X7TD6DFhRLDQvQw0__2wY3G4lAVygLUpskrHzBVbOSh2NSA==
+

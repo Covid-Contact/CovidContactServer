@@ -13,4 +13,6 @@ interface ContactNetworkService {
     fun generateAccessCode(contactNetworkName: String): String
 
     fun getContactNetworkByAccessCode(accessCode: String): ContactNetwork
+
+    fun joinContactNetwork(contactNetworkName: String, email: String)
 }
