@@ -7,4 +7,6 @@ interface ContactNetworkRepository : Neo4jRepository<ContactNetwork, String> {
     fun findContactNetworkByName(name: String): ContactNetwork?
 
     fun existsContactNetworkByAccessCode(accessCode: String): Boolean
+
+    fun findContactNetworkByAccessCode(accessCode: String): ContactNetwork?
 }

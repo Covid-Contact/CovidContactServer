@@ -4,6 +4,7 @@ import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
 import cat.covidcontact.server.controllers.runPut
 import cat.covidcontact.server.controllers.runRequest
+import cat.covidcontact.server.data.contactnetwork.ContactNetwork
 import cat.covidcontact.server.post.PostContactNetwork
 import cat.covidcontact.server.services.contactnetwork.ContactNetworkService
 import org.springframework.http.HttpStatus
@@ -18,28 +19,13 @@ class ContactNetworkController(
     @PostMapping(ContactNetworkControllerUrls.CREATE_CONTACT_NETWORK)
     fun createContactNetwork(@RequestBody postContactNetwork: PostContactNetwork) = runPost {
         val contactNetwork = contactNetworkService.createContactNetwork(postContactNetwork)
-        PostContactNetwork(
-            name = contactNetwork.name,
-            password = contactNetwork.password,
-            ownerUsername = contactNetwork.ownerUsername,
-            isVisible = contactNetwork.isVisible,
-            isPasswordProtected = contactNetwork.isPasswordProtected
-        )
+        contactNetwork.toPost()
     }
 
     @GetMapping(ContactNetworkControllerUrls.GET_CONTACT_NETWORKS)
     fun getContactNetworks(@RequestParam(required = true) email: String) = runGet {
         val contactNetworks = contactNetworkService.getContactNetworksFromUser(email)
-        contactNetworks.map { contactNetwork ->
-            PostContactNetwork(
-                name = contactNetwork.name,
-                password = contactNetwork.password,
-                ownerUsername = contactNetwork.ownerUsername,
-                isVisible = contactNetwork.isVisible,
-                isPasswordProtected = contactNetwork.isPasswordProtected,
-                accessCode = contactNetwork.accessCode
-            )
-        }
+        contactNetworks.map { contactNetwork -> contactNetwork.toPost() }
     }
 
     @PutMapping(ContactNetworkControllerUrls.ENABLE_USER_ADDITION)
@@ -57,6 +43,22 @@ class ContactNetworkController(
         contactNetworkService.generateAccessCode(contactNetworkName)
     }
 
+    @GetMapping(ContactNetworkControllerUrls.GET_CONTACT_NETWORK_BY_ACCESS_CODE)
+    fun getContactNetworkByAccessCode(@RequestParam(required = true) code: String) = runGet {
+        val contactNetwork = contactNetworkService.getContactNetworkByAccessCode(code)
+        contactNetwork.toPost()
+    }
+
     private fun parseContactNetworkName(name: String) =
         name.replace("%23", "#").replace("%20", " ")
+
+    private fun ContactNetwork.toPost(): PostContactNetwork =
+        PostContactNetwork(
+            name = name,
+            password = password,
+            ownerUsername = ownerUsername,
+            isVisible = isVisible,
+            isPasswordProtected = isPasswordProtected,
+            accessCode = accessCode
+        )
 }

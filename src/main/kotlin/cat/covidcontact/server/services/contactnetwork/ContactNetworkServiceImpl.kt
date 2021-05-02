@@ -62,6 +62,11 @@ class ContactNetworkServiceImpl(
         } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
     }
 
+    override fun getContactNetworkByAccessCode(accessCode: String): ContactNetwork {
+        val contactNetwork = contactNetworkRepository.findContactNetworkByAccessCode(accessCode)
+        return contactNetwork ?: throw ContactNetworkExceptions.invalidAccessCode
+    }
+
     private fun createContactNetwork(
         postContactNetwork: PostContactNetwork,
         owner: User

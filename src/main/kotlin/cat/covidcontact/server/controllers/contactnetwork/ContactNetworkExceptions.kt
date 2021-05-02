@@ -27,4 +27,10 @@ object ContactNetworkExceptions {
         "The contact network does not exist",
         HttpStatus.NOT_FOUND
     )
+
+    val invalidAccessCode = CovidContactException(
+        "CN5",
+        "The access code is invalid,",
+        HttpStatus.NOT_FOUND
+    )
 }

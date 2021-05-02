@@ -22,7 +22,7 @@ data class PostContactNetwork(
     @JsonProperty("is_password_protected")
     var isPasswordProtected: Boolean = true,
 
-    @JsonProperty("acces_code")
+    @JsonProperty("access_code")
     var accessCode: String? = null
 
 ) : Serializable
