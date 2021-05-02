@@ -3,40 +3,40 @@ package cat.covidcontact.server.post
 import cat.covidcontact.server.data.user.Gender
 import cat.covidcontact.server.data.user.Marriage
 import cat.covidcontact.server.data.user.Occupation
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable
 
 data class PostUser(
-    @SerializedName("email")
+    @JsonProperty("email")
     val email: String,
 
-    @SerializedName("username")
+    @JsonProperty("username")
     var username: String,
 
-    @SerializedName("gender")
+    @JsonProperty("gender")
     val gender: Gender,
 
-    @SerializedName("birth_date")
+    @JsonProperty("birth_date")
     val birthDate: Long,
 
-    @SerializedName("city")
+    @JsonProperty("city")
     var city: String? = null,
 
-    @SerializedName("studies")
+    @JsonProperty("studies")
     var studies: String? = null,
 
-    @SerializedName("occupation")
+    @JsonProperty("occupation")
     var occupation: Occupation? = null,
 
-    @SerializedName("marriage")
+    @JsonProperty("marriage")
     var marriage: Marriage? = null,
 
-    @SerializedName("children")
+    @JsonProperty("children")
     var children: Int? = null,
 
-    @SerializedName("has_been_positive")
+    @JsonProperty("has_been_positive")
     var hasBeenPositive: Boolean? = null,
 
-    @SerializedName("is_vaccinated")
+    @JsonProperty("is_vaccinated")
     var isVaccinated: Boolean? = null
 ) : Serializable

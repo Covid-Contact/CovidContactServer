@@ -3,12 +3,11 @@ package cat.covidcontact.server.controllers.user
 import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
 import cat.covidcontact.server.data.applicationuser.ApplicationUser
-import cat.covidcontact.server.data.device.Device
+import cat.covidcontact.server.post.PostDevice
 import cat.covidcontact.server.post.PostUser
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.device.DeviceService
 import cat.covidcontact.server.services.user.UserService
-import cat.covidcontact.server.services.userdevice.UserDeviceService
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -16,8 +15,7 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val applicationUserService: ApplicationUserService,
     private val userService: UserService,
-    private val deviceService: DeviceService,
-    private val userDeviceService: UserDeviceService
+    private val deviceService: DeviceService
 ) {
 
     @PostMapping(UserControllerUrls.SIGN_UP)
@@ -64,10 +62,9 @@ class UserController(
     @PostMapping(UserControllerUrls.USER_DEVICE)
     fun registerUserDevice(
         @RequestParam(required = true) email: String,
-        @RequestBody device: Device
+        @RequestBody device: PostDevice
     ) = runPost {
         val userNode = userService.getUserData(email)
-        deviceService.addDeviceIfNotExists(device)
-        userDeviceService.registerUserDevice(userNode, device)
+        deviceService.registerUserDevice(userNode, device)
     }
 }

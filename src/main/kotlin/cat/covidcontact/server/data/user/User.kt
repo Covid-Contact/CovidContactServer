@@ -23,4 +23,20 @@ data class User(
 
     @Relationship(type = "MEMBER", direction = Relationship.Direction.OUTGOING)
     var contactNetworks: MutableList<Member> = mutableListOf()
-) : Serializable
+) : Serializable {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as User
+
+        if (email != other.email) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return email.hashCode()
+    }
+}
