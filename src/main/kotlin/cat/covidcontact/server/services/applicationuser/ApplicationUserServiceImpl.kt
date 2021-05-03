@@ -1,10 +1,10 @@
 package cat.covidcontact.server.services.applicationuser
 
 import cat.covidcontact.server.controllers.user.ApplicationUserExceptions
-import cat.covidcontact.server.data.applicationuser.ApplicationUser
-import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
-import cat.covidcontact.server.data.verification.Verification
-import cat.covidcontact.server.data.verification.VerificationRepository
+import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUser
+import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
+import cat.covidcontact.server.model.authentication.verification.Verification
+import cat.covidcontact.server.model.authentication.verification.VerificationRepository
 import cat.covidcontact.server.services.email.EmailService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 

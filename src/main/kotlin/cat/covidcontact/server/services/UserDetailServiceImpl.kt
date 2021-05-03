@@ -1,6 +1,6 @@
 package cat.covidcontact.server.services
 
-import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
+import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
