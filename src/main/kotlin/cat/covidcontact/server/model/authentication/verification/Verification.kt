@@ -1,4 +1,4 @@
-package cat.covidcontact.server.data.verification
+package cat.covidcontact.server.model.authentication.verification
 
 import javax.persistence.Entity
 import javax.persistence.Id

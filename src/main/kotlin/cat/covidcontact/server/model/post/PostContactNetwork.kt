@@ -1,4 +1,4 @@
-package cat.covidcontact.server.post
+package cat.covidcontact.server.model.post
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable

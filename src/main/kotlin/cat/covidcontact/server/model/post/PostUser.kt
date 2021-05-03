@@ -1,8 +1,8 @@
-package cat.covidcontact.server.post
+package cat.covidcontact.server.model.post
 
-import cat.covidcontact.server.data.user.Gender
-import cat.covidcontact.server.data.user.Marriage
-import cat.covidcontact.server.data.user.Occupation
+import cat.covidcontact.server.model.nodes.user.Gender
+import cat.covidcontact.server.model.nodes.user.Marriage
+import cat.covidcontact.server.model.nodes.user.Occupation
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable
 

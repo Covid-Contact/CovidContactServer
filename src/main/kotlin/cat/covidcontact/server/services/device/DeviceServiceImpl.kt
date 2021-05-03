@@ -1,10 +1,10 @@
 package cat.covidcontact.server.services.device
 
-import cat.covidcontact.server.data.device.Device
-import cat.covidcontact.server.data.device.DeviceRepository
-import cat.covidcontact.server.data.device.UserDevice
-import cat.covidcontact.server.data.user.User
-import cat.covidcontact.server.post.PostDevice
+import cat.covidcontact.server.model.nodes.device.Device
+import cat.covidcontact.server.model.nodes.device.DeviceRepository
+import cat.covidcontact.server.model.nodes.device.UserDevice
+import cat.covidcontact.server.model.nodes.user.User
+import cat.covidcontact.server.model.post.PostDevice
 
 class DeviceServiceImpl(
     private val deviceRepository: DeviceRepository

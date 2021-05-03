@@ -1,6 +1,6 @@
-package cat.covidcontact.server.data.user
+package cat.covidcontact.server.model.nodes.user
 
-import cat.covidcontact.server.data.member.Member
+import cat.covidcontact.server.model.nodes.member.Member
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Relationship

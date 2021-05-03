@@ -2,12 +2,12 @@ package cat.covidcontact.server.services.contactnetwork
 
 import cat.covidcontact.server.controllers.contactnetwork.ContactNetworkExceptions
 import cat.covidcontact.server.controllers.user.UserExceptions
-import cat.covidcontact.server.data.contactnetwork.ContactNetwork
-import cat.covidcontact.server.data.contactnetwork.ContactNetworkRepository
-import cat.covidcontact.server.data.member.Member
-import cat.covidcontact.server.data.user.User
-import cat.covidcontact.server.data.user.UserRepository
-import cat.covidcontact.server.post.PostContactNetwork
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
+import cat.covidcontact.server.model.nodes.member.Member
+import cat.covidcontact.server.model.nodes.user.User
+import cat.covidcontact.server.model.nodes.user.UserRepository
+import cat.covidcontact.server.model.post.PostContactNetwork
 import cat.covidcontact.server.services.user.NumberCalculatorService
 
 class ContactNetworkServiceImpl(

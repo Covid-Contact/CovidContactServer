@@ -1,7 +1,7 @@
 package cat.covidcontact.server.services.contactnetwork
 
-import cat.covidcontact.server.data.contactnetwork.ContactNetwork
-import cat.covidcontact.server.post.PostContactNetwork
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
+import cat.covidcontact.server.model.post.PostContactNetwork
 
 interface ContactNetworkService {
     fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork

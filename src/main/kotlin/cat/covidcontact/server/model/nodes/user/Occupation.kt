@@ -1,4 +1,4 @@
-package cat.covidcontact.server.data.user
+package cat.covidcontact.server.model.nodes.user
 
 enum class Occupation {
     Student, Unemployed, Employed, Retired

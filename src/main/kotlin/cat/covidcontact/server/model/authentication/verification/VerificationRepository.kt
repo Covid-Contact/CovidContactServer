@@ -1,4 +1,4 @@
-package cat.covidcontact.server.data.verification
+package cat.covidcontact.server.model.authentication.verification
 
 import org.springframework.data.jpa.repository.JpaRepository
 

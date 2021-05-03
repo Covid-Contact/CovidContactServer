@@ -4,8 +4,8 @@ import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
 import cat.covidcontact.server.controllers.runPut
 import cat.covidcontact.server.controllers.runRequest
-import cat.covidcontact.server.data.contactnetwork.ContactNetwork
-import cat.covidcontact.server.post.PostContactNetwork
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
+import cat.covidcontact.server.model.post.PostContactNetwork
 import cat.covidcontact.server.services.contactnetwork.ContactNetworkService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

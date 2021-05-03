@@ -1,6 +1,6 @@
 package cat.covidcontact.server.services.applicationuser
 
-import cat.covidcontact.server.data.applicationuser.ApplicationUser
+import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUser
 
 interface ApplicationUserService {
     fun createUser(applicationUser: ApplicationUser)

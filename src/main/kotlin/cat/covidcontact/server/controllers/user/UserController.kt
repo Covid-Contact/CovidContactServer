@@ -2,9 +2,9 @@ package cat.covidcontact.server.controllers.user
 
 import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
-import cat.covidcontact.server.data.applicationuser.ApplicationUser
-import cat.covidcontact.server.post.PostDevice
-import cat.covidcontact.server.post.PostUser
+import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUser
+import cat.covidcontact.server.model.post.PostDevice
+import cat.covidcontact.server.model.post.PostUser
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.device.DeviceService
 import cat.covidcontact.server.services.user.UserService

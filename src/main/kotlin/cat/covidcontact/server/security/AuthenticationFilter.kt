@@ -1,6 +1,6 @@
 package cat.covidcontact.server.security
 
-import cat.covidcontact.server.data.applicationuser.ApplicationUser
+import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUser
 import cat.covidcontact.server.security.jwt.Jwt
 import cat.covidcontact.server.security.jwt.algorithms.Algorithm
 import cat.covidcontact.server.security.jwt.algorithms.SignatureAlgorithm

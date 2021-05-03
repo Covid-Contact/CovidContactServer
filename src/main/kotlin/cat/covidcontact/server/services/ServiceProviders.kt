@@ -1,10 +1,10 @@
 package cat.covidcontact.server.services
 
-import cat.covidcontact.server.data.applicationuser.ApplicationUserRepository
-import cat.covidcontact.server.data.contactnetwork.ContactNetworkRepository
-import cat.covidcontact.server.data.device.DeviceRepository
-import cat.covidcontact.server.data.user.UserRepository
-import cat.covidcontact.server.data.verification.VerificationRepository
+import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
+import cat.covidcontact.server.model.authentication.verification.VerificationRepository
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
+import cat.covidcontact.server.model.nodes.device.DeviceRepository
+import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
 import cat.covidcontact.server.services.contactnetwork.ContactNetworkService

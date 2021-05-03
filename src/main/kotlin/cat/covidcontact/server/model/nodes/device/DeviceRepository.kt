@@ -1,4 +1,4 @@
-package cat.covidcontact.server.data.device
+package cat.covidcontact.server.model.nodes.device
 
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
