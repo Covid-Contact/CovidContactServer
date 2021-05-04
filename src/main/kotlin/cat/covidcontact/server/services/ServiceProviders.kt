@@ -4,6 +4,7 @@ import cat.covidcontact.server.model.authentication.applicationuser.ApplicationU
 import cat.covidcontact.server.model.authentication.verification.VerificationRepository
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
+import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
@@ -13,6 +14,8 @@ import cat.covidcontact.server.services.device.DeviceService
 import cat.covidcontact.server.services.device.DeviceServiceImpl
 import cat.covidcontact.server.services.email.EmailService
 import cat.covidcontact.server.services.email.EmailServiceImpl
+import cat.covidcontact.server.services.interaction.InteractionService
+import cat.covidcontact.server.services.interaction.InteractionServiceImpl
 import cat.covidcontact.server.services.user.NumberCalculatorService
 import cat.covidcontact.server.services.user.NumberCalculatorServiceImpl
 import cat.covidcontact.server.services.user.UserService
@@ -73,6 +76,7 @@ class ServiceProviders {
     fun provideDeviceService(
         deviceRepository: DeviceRepository
     ): DeviceService = DeviceServiceImpl(deviceRepository)
+
     @Bean
     fun provideContactNetworkService(
         contactNetworkRepository: ContactNetworkRepository,
@@ -82,5 +86,16 @@ class ServiceProviders {
         contactNetworkRepository,
         userRepository,
         numberCalculatorService
+    )
+
+    @Bean
+    fun provideInteractionService(
+        deviceRepository: DeviceRepository,
+        contactNetworkRepository: ContactNetworkRepository,
+        interactionRepository: InteractionRepository
+    ): InteractionService = InteractionServiceImpl(
+        deviceRepository,
+        contactNetworkRepository,
+        interactionRepository
     )
 }

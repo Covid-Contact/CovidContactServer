@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
     implementation("org.springframework.boot:spring-boot-starter-mail:2.4.2")
+    implementation("junit:junit:4.12")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -32,6 +33,7 @@ dependencies {
     implementation("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.mockk:mockk:1.11.0")
 }
 
 tasks.withType<KotlinCompile> {

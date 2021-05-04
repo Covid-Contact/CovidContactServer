@@ -1,0 +1,12 @@
+###
+POST http://localhost:8080/interaction/read
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIwMjM2MzM3MDQxIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.09cFNQDzP1UE6L5mO7zdcZSsMxSj5Kmrw7fvOlCPGxJfHLmeTyiOEF3z0UtdgFLMZKLHuS-DoJSi3VyhELOSgQ==
+Content-Type: application/json
+
+{
+  "current_device_id": "fdd6278dfaacc3810571768f5105b60f56915bf4c7262a84c075f3cf881c3319844043c40e0b6430f493115971d9f5f52e79c5050dae0f7f8a5aa3aaf006000b",
+  "device_ids": [
+    "2855567cf510f8c1f8289eb89dfb1401ac63e06f8941f28d0fed0369baf9e0287a2f9bc498c4722b2dffdc8c61ec9fa426c806f52ade6337a8b14de030fd2673"
+  ],
+  "date_time": 1620150195259
+}
