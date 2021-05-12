@@ -91,11 +91,9 @@ class ServiceProviders {
     @Bean
     fun provideInteractionService(
         deviceRepository: DeviceRepository,
-        contactNetworkRepository: ContactNetworkRepository,
         interactionRepository: InteractionRepository
     ): InteractionService = InteractionServiceImpl(
         deviceRepository,
-        contactNetworkRepository,
         interactionRepository
     )
 }

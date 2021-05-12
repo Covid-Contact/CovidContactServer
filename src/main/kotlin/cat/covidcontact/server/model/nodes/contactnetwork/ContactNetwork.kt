@@ -1,6 +1,5 @@
 package cat.covidcontact.server.model.nodes.contactnetwork
 
-import cat.covidcontact.server.model.nodes.interaction.Interaction
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 
@@ -12,6 +11,5 @@ data class ContactNetwork(
     var ownerUsername: String? = null,
     var isVisible: Boolean = true,
     var isPasswordProtected: Boolean = true,
-    var accessCode: String? = null,
-    var interactions: MutableSet<Interaction> = mutableSetOf()
+    var accessCode: String? = null
 )

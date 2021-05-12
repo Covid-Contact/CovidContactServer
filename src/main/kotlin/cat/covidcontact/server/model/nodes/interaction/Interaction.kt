@@ -1,8 +1,10 @@
 package cat.covidcontact.server.model.nodes.interaction
 
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
 import org.springframework.data.neo4j.core.schema.GeneratedValue
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Relationship
 
 @Node
 data class Interaction(
@@ -11,7 +13,12 @@ data class Interaction(
     var id: Long? = null,
     var startDateTime: Long,
     var endDateTime: Long? = null,
-    var userInteractions: MutableList<UserInteraction> = mutableListOf()
+    var duration: Long? = null,
+    var isDangerous: Boolean? = null,
+    var userInteractions: MutableList<UserInteraction> = mutableListOf(),
+
+    @Relationship(type = "TAKE_PLACE_IN", direction = Relationship.Direction.OUTGOING)
+    var contactNetwork: ContactNetwork? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

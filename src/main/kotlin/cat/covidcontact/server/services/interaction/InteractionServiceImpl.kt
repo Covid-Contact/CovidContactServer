@@ -1,8 +1,8 @@
 package cat.covidcontact.server.services.interaction
 
 import cat.covidcontact.server.controllers.interaction.InteractionExceptions
+import cat.covidcontact.server.model.LimitParameters
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
-import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.interaction.Interaction
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
@@ -12,7 +12,6 @@ import cat.covidcontact.server.model.post.PostRead
 
 class InteractionServiceImpl(
     private val deviceRepository: DeviceRepository,
-    private val contactNetworkRepository: ContactNetworkRepository,
     private val interactionRepository: InteractionRepository
 ) : InteractionService {
 
@@ -20,25 +19,59 @@ class InteractionServiceImpl(
         val currentUser = getUserFromDevice(read.currentDeviceId) ?: return
         val currentUserContactNetworks = currentUser.getContactNetworks()
 
-        println("Read: $read")
-        println("Current user: ${currentUser.email}")
-        println("Current user contact networks: ${currentUserContactNetworks.map { it.name }}")
-        println("----------")
+        if (read.deviceIds.isEmpty()) {
+            registerSendEnding(read, currentUser, currentUserContactNetworks)
+        } else {
+            registerInteractionsToContactNetworks(read, currentUserContactNetworks, currentUser)
+        }
+    }
 
+    private fun registerSendEnding(
+        read: PostRead,
+        user: User,
+        contactNetworks: List<ContactNetwork>
+    ) {
+        contactNetworks.forEach { contactNetwork ->
+            val interactions = interactionRepository.getInteractionsByContactNetworkName(
+                contactNetwork.name
+            ).getNotEndedUserInteractions(user)
+
+            interactions.forEach { interaction ->
+                finishUserSending(interaction, user, read)
+            }
+
+            interactionRepository.saveAll(interactions)
+        }
+    }
+
+    private fun finishUserSending(
+        interaction: Interaction,
+        user: User,
+        read: PostRead
+    ) {
+        interaction.userInteractions.find { it.user.email == user.email }?.isEnded = true
+
+        if (interaction.userInteractions.all { it.isEnded }) {
+            interaction.apply {
+                endDateTime = read.dateTime
+                duration = endDateTime!! - startDateTime
+                isDangerous = duration!! >= LimitParameters.MIN_CONTAGIOUS_DURATION
+            }
+        }
+    }
+
+    private fun registerInteractionsToContactNetworks(
+        read: PostRead,
+        currentUserContactNetworks: List<ContactNetwork>,
+        currentUser: User
+    ) {
         read.deviceIds.forEach { deviceId ->
             val user = getUserFromDevice(deviceId) ?: throw InteractionExceptions.deviceNotFound
             val contactNetworks = user.getContactNetworks()
             val commonContactNetworks = currentUserContactNetworks intersect contactNetworks
 
-            println("User: ${user.email}")
-            println("User contact networks: ${contactNetworks.map { it.name }}")
-            println("User contact networks common: ${commonContactNetworks.map { it.name }}")
-            println("----------")
-
             commonContactNetworks.forEach { contactNetwork ->
-                println("Starting ${contactNetwork.name}")
                 registerInteraction(contactNetwork, currentUser, read, user)
-                contactNetworkRepository.save(contactNetwork)
             }
         }
     }
@@ -49,31 +82,44 @@ class InteractionServiceImpl(
         read: PostRead,
         user: User
     ) {
-        val interactions = contactNetwork.interactions
-            .getNotEndedUserInteractions(currentUser)
-
-        println("Current interactions: ${interactions.map { int -> int.userInteractions.map { it.user.email } }}")
+        val interactions = interactionRepository.getInteractionsByContactNetworkName(
+            contactNetwork.name
+        ).getNotEndedUserInteractions(currentUser)
 
         if (interactions.isEmpty()) {
-            interactions.add(
-                Interaction(
-                    startDateTime = read.dateTime,
-                    userInteractions = mutableListOf(UserInteraction(user = currentUser))
-                )
-            )
+            addNewInteraction(interactions, read, currentUser, contactNetwork)
         }
 
         interactions.forEach { interaction ->
-            if (!interaction.userInteractions.map { it.user.email }.contains(user.email)) {
-                interaction.userInteractions.add(UserInteraction(user = user))
-            }
+            updateInteraction(interaction, user)
         }
 
-        println("After interactions: ${interactions.map { int -> int.userInteractions.map { it.user.email } }}")
-        //interactionRepository.saveAll(interactions)
-        contactNetwork.interactions.addAll(interactions)
-        println(contactNetwork.interactions.map { int -> int.userInteractions.map { it.user.email } })
-        println("----------")
+        interactionRepository.saveAll(interactions)
+    }
+
+    private fun updateInteraction(interaction: Interaction, user: User) {
+        var userInteraction = interaction.userInteractions.find { it.user.email == user.email }
+        if (userInteraction == null) {
+            userInteraction = UserInteraction(user = user)
+            interaction.userInteractions.add(userInteraction)
+        }
+
+        userInteraction.isEnded = false
+    }
+
+    private fun addNewInteraction(
+        interactions: MutableList<Interaction>,
+        read: PostRead,
+        currentUser: User,
+        contactNetwork: ContactNetwork
+    ) {
+        interactions.add(
+            Interaction(
+                startDateTime = read.dateTime,
+                userInteractions = mutableListOf(UserInteraction(user = currentUser)),
+                contactNetwork = contactNetwork
+            )
+        )
     }
 
     private fun getUserFromDevice(deviceId: String): User? {
@@ -85,7 +131,7 @@ class InteractionServiceImpl(
     private fun User.getContactNetworks(): List<ContactNetwork> =
         contactNetworks.map { it.contactNetwork }
 
-    private fun Set<Interaction>.getNotEndedUserInteractions(
+    private fun List<Interaction>.getNotEndedUserInteractions(
         user: User
     ): MutableList<Interaction> = filter { interaction ->
         interaction.endDateTime == null && interaction.userInteractions.containsUser(user)
