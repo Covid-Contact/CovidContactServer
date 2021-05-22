@@ -18,6 +18,7 @@ class ApplicationUserServiceImpl(
     private val codeLength = 50
     private val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
+    @Synchronized
     override fun createUser(applicationUser: ApplicationUser) {
         applicationUser.password = bCryptPasswordEncoder.encode(applicationUser.password)
         val userFound = applicationUserRepository.findByEmail(applicationUser.email)
@@ -34,6 +35,7 @@ class ApplicationUserServiceImpl(
         emailService.sendConfirmationEmail(applicationUser.email, code)
     }
 
+    @Synchronized
     override fun validateUser(validateId: String) {
         val verification = verificationRepository.findByCode(validateId)
             ?: throw ApplicationUserExceptions.invalidIdException
@@ -44,6 +46,7 @@ class ApplicationUserServiceImpl(
         verificationRepository.delete(verification)
     }
 
+    @Synchronized
     override fun isValidated(email: String): Boolean {
         val user = applicationUserRepository.findByEmail(email)
             ?: throw ApplicationUserExceptions.userNotExistingException

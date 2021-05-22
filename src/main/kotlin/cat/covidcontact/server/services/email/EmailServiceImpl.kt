@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 
 class EmailServiceImpl(private val mailSender: JavaMailSenderImpl) : EmailService {
 
+    @Synchronized
     override fun sendConfirmationEmail(destination: String, validationCode: String) {
         val subject = "Confirm your email"
         val text = "Please go to the next link to validate your account: " +

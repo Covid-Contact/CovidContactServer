@@ -10,6 +10,7 @@ class DeviceServiceImpl(
     private val deviceRepository: DeviceRepository
 ) : DeviceService {
 
+    @Synchronized
     override fun registerUserDevice(user: User, device: PostDevice) {
         logoutOtherDevices(user)
         loginCurrentDevice(device, user)

@@ -9,4 +9,6 @@ interface ContactNetworkRepository : Neo4jRepository<ContactNetwork, String> {
     fun existsContactNetworkByAccessCode(accessCode: String): Boolean
 
     fun findContactNetworkByAccessCode(accessCode: String): ContactNetwork?
+
+    fun removeContactNetworkByName(name: String)
 }

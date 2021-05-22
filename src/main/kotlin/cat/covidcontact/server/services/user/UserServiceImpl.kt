@@ -10,6 +10,7 @@ class UserServiceImpl(
     private val numberCalculatorService: NumberCalculatorService
 ) : UserService {
 
+    @Synchronized
     override fun addUserData(user: PostUser) {
         if (userRepository.existsUserByEmail(user.email)) {
             throw UserExceptions.userDataFound
@@ -36,6 +37,7 @@ class UserServiceImpl(
         userRepository.save(userNode)
     }
 
+    @Synchronized
     override fun getUserData(email: String): User {
         return userRepository.findByEmail(email) ?: throw UserExceptions.userDataNotFound
     }
