@@ -15,6 +15,7 @@ class InteractionServiceImpl(
     private val interactionRepository: InteractionRepository
 ) : InteractionService {
 
+    @Synchronized
     override fun addRead(read: PostRead) {
         val currentUser = getUserFromDevice(read.currentDeviceId) ?: return
         val currentUserContactNetworks = currentUser.getContactNetworks()

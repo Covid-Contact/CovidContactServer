@@ -16,6 +16,7 @@ class ContactNetworkServiceImpl(
     private val numberCalculatorService: NumberCalculatorService
 ) : ContactNetworkService {
 
+    @Synchronized
     override fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork {
         var createdContactNetwork: ContactNetwork? = null
         postContactNetwork.ownerEmail?.let { ownerEmail ->
@@ -34,12 +35,14 @@ class ContactNetworkServiceImpl(
         return createdContactNetwork!!
     }
 
+    @Synchronized
     override fun getContactNetworksFromUser(email: String): List<ContactNetwork> {
         val user = userRepository.findByEmail(email)
         return user?.contactNetworks?.map { it.contactNetwork }
             ?: throw UserExceptions.userDataNotFound
     }
 
+    @Synchronized
     override fun enableUserAddition(contactNetworkName: String, isEnabled: Boolean) {
         val contactNetwork = contactNetworkRepository.findContactNetworkByName(contactNetworkName)
         contactNetwork?.let {
@@ -48,6 +51,7 @@ class ContactNetworkServiceImpl(
         } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
     }
 
+    @Synchronized
     override fun generateAccessCode(contactNetworkName: String): String {
         val contactNetwork = contactNetworkRepository.findContactNetworkByName(contactNetworkName)
         return contactNetwork?.let { network ->
@@ -62,11 +66,13 @@ class ContactNetworkServiceImpl(
         } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
     }
 
+    @Synchronized
     override fun getContactNetworkByAccessCode(accessCode: String): ContactNetwork {
         val contactNetwork = contactNetworkRepository.findContactNetworkByAccessCode(accessCode)
         return contactNetwork ?: throw ContactNetworkExceptions.invalidAccessCode
     }
 
+    @Synchronized
     override fun joinContactNetwork(contactNetworkName: String, email: String) {
         val user = userRepository.findByEmail(email)
         user?.let { currentUser ->
