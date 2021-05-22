@@ -9,6 +9,8 @@ import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
 import cat.covidcontact.server.model.nodes.interaction.UserInteraction
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.post.PostRead
+import kotlin.math.max
+import kotlin.math.min
 
 class InteractionServiceImpl(
     private val deviceRepository: DeviceRepository,
@@ -53,8 +55,10 @@ class InteractionServiceImpl(
         interaction.userInteractions.find { it.user.email == user.email }?.isEnded = true
 
         if (interaction.userInteractions.all { it.isEnded }) {
+            val originalStart = interaction.startDateTime
             interaction.apply {
-                endDateTime = read.dateTime
+                startDateTime = min(originalStart, read.dateTime)
+                endDateTime = max(originalStart, read.dateTime)
                 duration = endDateTime!! - startDateTime
                 isDangerous = duration!! >= LimitParameters.MIN_CONTAGIOUS_DURATION
             }
