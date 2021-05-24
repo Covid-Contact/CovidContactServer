@@ -182,6 +182,7 @@ class InteractionServiceImpl(
     }
 
     private fun sendCurrentState(user: User) {
+        println("Sent message to ${user.email} with ${user.state}")
         user.messagingToken?.let { token ->
             val message = Message.builder()
                 .setToken(token.decrypt())

@@ -38,5 +38,3 @@ out/
 
 src/main/resources/application.properties
 
-/public.pem
-/private.pem
