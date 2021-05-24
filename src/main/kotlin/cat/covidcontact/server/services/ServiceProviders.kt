@@ -1,6 +1,7 @@
 package cat.covidcontact.server.services
 
 import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
+import cat.covidcontact.server.model.authentication.message.MessageRepository
 import cat.covidcontact.server.model.authentication.verification.VerificationRepository
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
@@ -20,6 +21,7 @@ import cat.covidcontact.server.services.user.NumberCalculatorService
 import cat.covidcontact.server.services.user.NumberCalculatorServiceImpl
 import cat.covidcontact.server.services.user.UserService
 import cat.covidcontact.server.services.user.UserServiceImpl
+import com.google.firebase.messaging.FirebaseMessaging
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -34,11 +36,13 @@ class ServiceProviders {
         emailService: EmailService,
         applicationUserRepository: ApplicationUserRepository,
         verificationRepository: VerificationRepository,
+        messageRepository: MessageRepository,
         bCryptPasswordEncoder: BCryptPasswordEncoder
     ): ApplicationUserService = ApplicationUserServiceImpl(
         emailService,
         applicationUserRepository,
         verificationRepository,
+        messageRepository,
         bCryptPasswordEncoder
     )
 
@@ -81,19 +85,27 @@ class ServiceProviders {
     fun provideContactNetworkService(
         contactNetworkRepository: ContactNetworkRepository,
         userRepository: UserRepository,
-        numberCalculatorService: NumberCalculatorService
+        numberCalculatorService: NumberCalculatorService,
+        firebaseMessaging: FirebaseMessaging
     ): ContactNetworkService = ContactNetworkServiceImpl(
         contactNetworkRepository,
         userRepository,
-        numberCalculatorService
+        numberCalculatorService,
+        firebaseMessaging
     )
 
     @Bean
     fun provideInteractionService(
         deviceRepository: DeviceRepository,
-        interactionRepository: InteractionRepository
+        interactionRepository: InteractionRepository,
+        userRepository: UserRepository,
+        contactNetworkRepository: ContactNetworkRepository,
+        firebaseMessaging: FirebaseMessaging
     ): InteractionService = InteractionServiceImpl(
         deviceRepository,
-        interactionRepository
+        interactionRepository,
+        userRepository,
+        contactNetworkRepository,
+        firebaseMessaging
     )
 }

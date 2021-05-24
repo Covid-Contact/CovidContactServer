@@ -23,6 +23,9 @@ data class PostContactNetwork(
     var isPasswordProtected: Boolean = true,
 
     @JsonProperty("access_code")
-    var accessCode: String? = null
+    var accessCode: String? = null,
+
+    @JsonProperty("state")
+    var state: String? = null
 
 ) : Serializable

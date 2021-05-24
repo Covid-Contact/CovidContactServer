@@ -32,6 +32,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.5")
     implementation("org.postgresql:postgresql")
 
+    implementation("com.google.firebase:firebase-admin:7.3.0")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.11.0")
 }

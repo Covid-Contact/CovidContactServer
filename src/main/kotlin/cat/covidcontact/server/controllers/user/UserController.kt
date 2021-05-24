@@ -4,6 +4,7 @@ import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
 import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUser
 import cat.covidcontact.server.model.post.PostDevice
+import cat.covidcontact.server.model.post.PostToken
 import cat.covidcontact.server.model.post.PostUser
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.device.DeviceService
@@ -54,7 +55,8 @@ class UserController(
                 marriage,
                 children,
                 hasBeenPositive,
-                isVaccinated
+                isVaccinated,
+                state
             )
         }
     }
@@ -66,5 +68,10 @@ class UserController(
     ) = runPost {
         val userNode = userService.getUserData(email)
         deviceService.registerUserDevice(userNode, device)
+    }
+
+    @PostMapping(UserControllerUrls.MESSAGE_TOKEN)
+    fun registerMessageToken(@RequestBody postToken: PostToken) = runPost {
+        userService.registerMessagingToken(postToken.email, postToken.token)
     }
 }

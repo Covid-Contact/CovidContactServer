@@ -3,6 +3,7 @@ package cat.covidcontact.server.model.post
 import cat.covidcontact.server.model.nodes.user.Gender
 import cat.covidcontact.server.model.nodes.user.Marriage
 import cat.covidcontact.server.model.nodes.user.Occupation
+import cat.covidcontact.server.model.nodes.user.UserState
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable
 
@@ -38,5 +39,8 @@ data class PostUser(
     var hasBeenPositive: Boolean? = null,
 
     @JsonProperty("is_vaccinated")
-    var isVaccinated: Boolean? = null
+    var isVaccinated: Boolean? = null,
+
+    @JsonProperty("state")
+    var state: UserState? = null
 ) : Serializable
