@@ -55,7 +55,8 @@ class UserController(
                 marriage,
                 children,
                 hasBeenPositive,
-                isVaccinated
+                isVaccinated,
+                state
             )
         }
     }
@@ -71,6 +72,6 @@ class UserController(
 
     @PostMapping(UserControllerUrls.MESSAGE_TOKEN)
     fun registerMessageToken(@RequestBody postToken: PostToken) = runPost {
-        applicationUserService.registerMessageToken(postToken.email, postToken.token)
+        userService.registerMessagingToken(postToken.email, postToken.token)
     }
 }

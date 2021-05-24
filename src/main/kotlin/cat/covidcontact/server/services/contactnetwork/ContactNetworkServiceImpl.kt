@@ -2,15 +2,16 @@ package cat.covidcontact.server.services.contactnetwork
 
 import cat.covidcontact.server.controllers.contactnetwork.ContactNetworkExceptions
 import cat.covidcontact.server.controllers.user.UserExceptions
+import cat.covidcontact.server.model.LimitParameters
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkState
 import cat.covidcontact.server.model.nodes.member.Member
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostContactNetwork
 import cat.covidcontact.server.services.user.NumberCalculatorService
 import com.google.firebase.messaging.FirebaseMessaging
-import java.security.MessageDigest
 
 class ContactNetworkServiceImpl(
     private val contactNetworkRepository: ContactNetworkRepository,
@@ -93,12 +94,9 @@ class ContactNetworkServiceImpl(
             val contactNetwork =
                 contactNetworkRepository.findContactNetworkByName(contactNetworkName)
             contactNetwork?.let { currentContactNetwork ->
-                currentUser.contactNetworks.add(Member(contactNetwork = currentContactNetwork))
-                userRepository.save(currentUser)
+                addMember(currentUser, currentContactNetwork)
             } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
         } ?: throw UserExceptions.userDataNotFound
-
-        joinNotificationTopic(contactNetworkName, messageToken)
     }
 
     private fun createContactNetwork(
@@ -113,22 +111,35 @@ class ContactNetworkServiceImpl(
             ownerUsername = owner.username
         )
 
-        joinNotificationTopic(contactNetwork.name, ownerMessageToken)
-
-        owner.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
-        userRepository.save(owner)
-
+        addMember(owner, contactNetwork, isOwner = true)
         return contactNetwork
     }
 
-    private fun joinNotificationTopic(contactNetworkName: String, ownerMessageToken: String) {
-        firebaseMessaging.subscribeToTopic(listOf(ownerMessageToken), contactNetworkName.sha512())
+    private fun addMember(
+        user: User,
+        contactNetwork: ContactNetwork,
+        isOwner: Boolean = false
+    ): User {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = isOwner))
+        contactNetwork.memberEmails.add(user.email)
+        ++contactNetwork.members
+        updateContactNetworkState(contactNetwork)
+        return userRepository.save(user)
     }
 
-    private fun String.sha512(): String =
-        MessageDigest.getInstance("SHA-512")
-            .digest(toByteArray())
-            .map { byte -> Integer.toHexString(0xFF and byte.toInt()) }
-            .map { byte -> if (byte.length < 2) "0$byte" else byte }
-            .fold("") { total, actual -> total + actual }
+    private fun updateContactNetworkState(contactNetwork: ContactNetwork) {
+        if (contactNetwork.state != ContactNetworkState.PositiveDetected) {
+            val maxPeopleRecommended = LimitParameters.MAX_PEOPLE_RECOMMENDED
+            val almostLimit = (maxPeopleRecommended * 0.75).toInt()
+
+            contactNetwork.apply {
+                state = when (members) {
+                    in 0 until almostLimit -> ContactNetworkState.Normal
+                    in almostLimit until maxPeopleRecommended -> ContactNetworkState.AlmostLimit
+                    maxPeopleRecommended -> ContactNetworkState.Limit
+                    else -> ContactNetworkState.OverLimit
+                }
+            }
+        }
+    }
 }

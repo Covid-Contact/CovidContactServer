@@ -97,9 +97,15 @@ class ServiceProviders {
     @Bean
     fun provideInteractionService(
         deviceRepository: DeviceRepository,
-        interactionRepository: InteractionRepository
+        interactionRepository: InteractionRepository,
+        userRepository: UserRepository,
+        contactNetworkRepository: ContactNetworkRepository,
+        firebaseMessaging: FirebaseMessaging
     ): InteractionService = InteractionServiceImpl(
         deviceRepository,
-        interactionRepository
+        interactionRepository,
+        userRepository,
+        contactNetworkRepository,
+        firebaseMessaging
     )
 }

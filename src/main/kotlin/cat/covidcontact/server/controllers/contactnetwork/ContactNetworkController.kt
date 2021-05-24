@@ -75,6 +75,7 @@ class ContactNetworkController(
             ownerUsername = ownerUsername,
             isVisible = isVisible,
             isPasswordProtected = isPasswordProtected,
-            accessCode = accessCode
+            accessCode = accessCode,
+            state = state.toString()
         )
 }

@@ -11,5 +11,8 @@ data class ContactNetwork(
     var ownerUsername: String? = null,
     var isVisible: Boolean = true,
     var isPasswordProtected: Boolean = true,
-    var accessCode: String? = null
+    var accessCode: String? = null,
+    var memberEmails: MutableList<String> = mutableListOf(),
+    var state: ContactNetworkState = ContactNetworkState.Normal,
+    var members: Int = 0
 )
