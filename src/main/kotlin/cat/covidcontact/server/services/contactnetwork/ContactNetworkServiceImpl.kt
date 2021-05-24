@@ -9,30 +9,32 @@ import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostContactNetwork
 import cat.covidcontact.server.services.user.NumberCalculatorService
+import com.google.firebase.messaging.FirebaseMessaging
+import java.security.MessageDigest
 
 class ContactNetworkServiceImpl(
     private val contactNetworkRepository: ContactNetworkRepository,
     private val userRepository: UserRepository,
-    private val numberCalculatorService: NumberCalculatorService
+    private val numberCalculatorService: NumberCalculatorService,
+    private val firebaseMessaging: FirebaseMessaging
 ) : ContactNetworkService {
 
     @Synchronized
-    override fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork {
-        var createdContactNetwork: ContactNetwork? = null
-        postContactNetwork.ownerEmail?.let { ownerEmail ->
-            val user = userRepository.findByEmail(ownerEmail)
-
-            user?.let { owner ->
-                val contactNetworkExistsForUser = user.contactNetworks
+    override fun createContactNetwork(
+        postContactNetwork: PostContactNetwork,
+        ownerMessageToken: String
+    ): ContactNetwork {
+        return postContactNetwork.ownerEmail?.let { ownerEmail ->
+            userRepository.findByEmail(ownerEmail)?.let { owner ->
+                val contactNetworkExistsForUser = owner.contactNetworks
                     .find { it.contactNetwork.name.startsWith(postContactNetwork.name) } != null
                 if (contactNetworkExistsForUser) {
                     throw ContactNetworkExceptions.contactNetworkFoundForUser
                 }
-                createdContactNetwork = createContactNetwork(postContactNetwork, owner)
-            } ?: UserExceptions.userDataNotFound
+                createContactNetwork(postContactNetwork, ownerMessageToken, owner)
+            } ?: throw UserExceptions.userDataNotFound
         } ?: throw ContactNetworkExceptions.ownerEmailNotFound
 
-        return createdContactNetwork!!
     }
 
     @Synchronized
@@ -73,7 +75,11 @@ class ContactNetworkServiceImpl(
     }
 
     @Synchronized
-    override fun joinContactNetwork(contactNetworkName: String, email: String) {
+    override fun joinContactNetwork(
+        contactNetworkName: String,
+        email: String,
+        messageToken: String
+    ) {
         val user = userRepository.findByEmail(email)
         user?.let { currentUser ->
             val member = currentUser.contactNetworks.find {
@@ -91,10 +97,13 @@ class ContactNetworkServiceImpl(
                 userRepository.save(currentUser)
             } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
         } ?: throw UserExceptions.userDataNotFound
+
+        joinNotificationTopic(contactNetworkName, messageToken)
     }
 
     private fun createContactNetwork(
         postContactNetwork: PostContactNetwork,
+        ownerMessageToken: String,
         owner: User
     ): ContactNetwork {
         val code = numberCalculatorService.generateRandomNumber()
@@ -104,8 +113,22 @@ class ContactNetworkServiceImpl(
             ownerUsername = owner.username
         )
 
+        joinNotificationTopic(contactNetwork.name, ownerMessageToken)
+
         owner.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
         userRepository.save(owner)
+
         return contactNetwork
     }
+
+    private fun joinNotificationTopic(contactNetworkName: String, ownerMessageToken: String) {
+        firebaseMessaging.subscribeToTopic(listOf(ownerMessageToken), contactNetworkName.sha512())
+    }
+
+    private fun String.sha512(): String =
+        MessageDigest.getInstance("SHA-512")
+            .digest(toByteArray())
+            .map { byte -> Integer.toHexString(0xFF and byte.toInt()) }
+            .map { byte -> if (byte.length < 2) "0$byte" else byte }
+            .fold("") { total, actual -> total + actual }
 }

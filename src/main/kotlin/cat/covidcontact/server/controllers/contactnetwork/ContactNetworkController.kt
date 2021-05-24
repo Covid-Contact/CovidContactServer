@@ -6,6 +6,7 @@ import cat.covidcontact.server.controllers.runPut
 import cat.covidcontact.server.controllers.runRequest
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
 import cat.covidcontact.server.model.post.PostContactNetwork
+import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.contactnetwork.ContactNetworkService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -13,12 +14,17 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(ContactNetworkControllerUrls.BASE)
 class ContactNetworkController(
-    private val contactNetworkService: ContactNetworkService
+    private val contactNetworkService: ContactNetworkService,
+    private val applicationUserService: ApplicationUserService
 ) {
 
     @PostMapping(ContactNetworkControllerUrls.CREATE_CONTACT_NETWORK)
     fun createContactNetwork(@RequestBody postContactNetwork: PostContactNetwork) = runPost {
-        val contactNetwork = contactNetworkService.createContactNetwork(postContactNetwork)
+        val messageToken = applicationUserService.getMessageToken(postContactNetwork.ownerEmail!!)
+        val contactNetwork = contactNetworkService.createContactNetwork(
+            postContactNetwork,
+            messageToken
+        )
         contactNetwork.toPost()
     }
 
@@ -55,7 +61,8 @@ class ContactNetworkController(
         @RequestParam(required = true) email: String
     ) = runPut {
         val contactNetworkName = parseContactNetworkName(name)
-        contactNetworkService.joinContactNetwork(contactNetworkName, email)
+        val messageToken = applicationUserService.getMessageToken(email)
+        contactNetworkService.joinContactNetwork(contactNetworkName, email, messageToken)
     }
 
     private fun parseContactNetworkName(name: String) =

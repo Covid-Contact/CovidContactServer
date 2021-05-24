@@ -4,6 +4,16 @@
       "name": "secretKey",
       "type": "java.lang.String",
       "description": "Secret key for jwt."
+    },
+    {
+      "name": "fcm.apikey",
+      "type": "java.lang.String",
+      "description": "Api key for fcm."
+    },
+    {
+      "name": "fcm.projectid",
+      "type": "java.lang.String",
+      "description": "Project if for fcm."
     }
   ]
 }

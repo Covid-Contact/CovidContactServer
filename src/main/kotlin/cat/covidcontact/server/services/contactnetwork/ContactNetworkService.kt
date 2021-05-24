@@ -4,7 +4,10 @@ import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
 import cat.covidcontact.server.model.post.PostContactNetwork
 
 interface ContactNetworkService {
-    fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork
+    fun createContactNetwork(
+        postContactNetwork: PostContactNetwork,
+        ownerMessageToken: String
+    ): ContactNetwork
 
     fun getContactNetworksFromUser(email: String): List<ContactNetwork>
 
@@ -14,5 +17,5 @@ interface ContactNetworkService {
 
     fun getContactNetworkByAccessCode(accessCode: String): ContactNetwork
 
-    fun joinContactNetwork(contactNetworkName: String, email: String)
+    fun joinContactNetwork(contactNetworkName: String, email: String, messageToken: String)
 }

@@ -52,3 +52,17 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIwMDE5O
 PUT http://localhost:8080/contactnetwork/Fibers%231012/join?email=apintogil@gmail.com
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIwMDE5ODQ3NjQwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.hRfdyd6V4MgfeI78QqlDX7puwspiv-6gwbKunH_X7TD6DFhRLDQvQw0__2wY3G4lAVygLUpskrHzBVbOSh2NSA==
 
+
+###
+POST http://localhost:8080/contactnetwork/
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIxODgwMjc1OTcxIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.o-msNROMq3kNmPEbB_7RPMUfzXVmukkOQIrp_91xHMhk6joxL8giCbdLrbbXRsr9Me4yxYhR0NN1Y2OntutUxg==
+Content-Type: application/json
+
+{
+  "name": "Joves",
+  "password": "1234",
+  "owner_email": "apintogil@gmail.com",
+  "owner_username": "AlbertPG#7721",
+  "is_visible": false,
+  "is_password_protected": true
+}
