@@ -8,4 +8,5 @@ object UserControllerUrls {
     const val VALIDATED = "/validated"
     const val USER_INFO = "/userinfo"
     const val USER_DEVICE = "/device"
+    const val UPDATE = "/update"
 }

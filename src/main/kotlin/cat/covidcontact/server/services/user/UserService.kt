@@ -5,6 +5,15 @@ import cat.covidcontact.server.model.post.PostUser
 
 interface UserService {
     fun addUserData(user: PostUser)
-
     fun getUserData(email: String): User
+    fun updateUser(
+        newEmail: String,
+        newCity: String?,
+        newStudies: String?,
+        newOccupation: String?,
+        newMarriage: String?,
+        newChildren: Int?,
+        newPositive: Boolean?,
+        newVaccinated: Boolean?
+    )
 }
