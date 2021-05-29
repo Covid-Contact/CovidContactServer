@@ -2,6 +2,7 @@ package cat.covidcontact.server.controllers.user
 
 import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
+import cat.covidcontact.server.controllers.runPut
 import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUser
 import cat.covidcontact.server.model.post.PostDevice
 import cat.covidcontact.server.model.post.PostToken
@@ -73,5 +74,29 @@ class UserController(
     @PostMapping(UserControllerUrls.MESSAGE_TOKEN)
     fun registerMessageToken(@RequestBody postToken: PostToken) = runPost {
         userService.registerMessagingToken(postToken.email, postToken.token)
+    }
+
+    @PutMapping(UserControllerUrls.UPDATE)
+    fun updateUser(
+        @RequestParam(required = true) email: String,
+        @RequestParam(required = false) city: String?,
+        @RequestParam(required = false) studies: String?,
+        @RequestParam(required = false) occupation: String?,
+        @RequestParam(required = false) marriage: String?,
+        @RequestParam(required = false) children: Int?,
+        @RequestParam(required = false) positive: Boolean?,
+        @RequestParam(required = false) vaccinated: Boolean?
+    ) = runPut {
+        println(email)
+        userService.updateUser(
+            email,
+            city,
+            studies,
+            occupation,
+            marriage,
+            children,
+            positive,
+            vaccinated
+        )
     }
 }
