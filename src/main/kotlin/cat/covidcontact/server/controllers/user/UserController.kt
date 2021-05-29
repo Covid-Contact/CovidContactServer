@@ -55,7 +55,7 @@ class UserController(
                 marriage,
                 children,
                 hasBeenPositive,
-                isVaccinated
+                isVaccinated,
             )
         }
     }
