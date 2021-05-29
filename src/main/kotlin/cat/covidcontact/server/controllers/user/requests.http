@@ -157,3 +157,13 @@ Content-Type: application/json
 ###
 PUT http://localhost:8080/user/update?email=apintogil@gmail.com&studies=Working
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyMjkzMzk3MzIxIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.SOOLkXhgtNd3X2saI6ehyjaNs-WdTuoDIkpV_ctCWagWFHN6Y4IjKJ3CCxIKL21UzHiNKkI5CP5R0iw2TJ5lZQ==
+
+###
+POST http://localhost:8080/user/messagetoken
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIxODgwMjc1OTcxIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.o-msNROMq3kNmPEbB_7RPMUfzXVmukkOQIrp_91xHMhk6joxL8giCbdLrbbXRsr9Me4yxYhR0NN1Y2OntutUxg==
+Content-Type: application/json
+
+{
+  "email": "apintogil@gmail.com",
+  "token": "c-1NkCbeT6OQAe0TrbfiWY:APA91bFeep5ggzQIhKRQDhOsSDVmD4Ge_7xLoBHnZBxPZm9frot5S6RMB2gkb-vnXTdEprilTR0uobSqfNTQag0QFwOnEjQxE7DA3nFbxTq36cAFnXBK5jaWpqXFxZmR5OwvimISQr2-"
+}

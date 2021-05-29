@@ -1,6 +1,6 @@
 ###
 POST http://localhost:8080/interaction/read
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIxNzU3ODQ2MTU3Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.OQMeintwAf3KEPC3edCGF_ZMloVo8cDIQ77RuJU5YqaM9s0n4XEjX5cAO_B440w0E_5FFcrUHL_2CfwWQ2uXZQ==
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIxODgwMjc1OTcxIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.o-msNROMq3kNmPEbB_7RPMUfzXVmukkOQIrp_91xHMhk6joxL8giCbdLrbbXRsr9Me4yxYhR0NN1Y2OntutUxg==
 Content-Type: application/json
 
 {
@@ -45,3 +45,7 @@ Content-Type: application/json
   ],
   "date_time": 1620150195280
 }
+
+###
+PUT http://localhost:8080/interaction/positive?email=apintogil@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIxODgwMjc1OTcxIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.o-msNROMq3kNmPEbB_7RPMUfzXVmukkOQIrp_91xHMhk6joxL8giCbdLrbbXRsr9Me4yxYhR0NN1Y2OntutUxg==

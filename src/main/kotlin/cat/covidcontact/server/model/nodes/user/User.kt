@@ -20,6 +20,8 @@ data class User(
     var children: Int? = null,
     var hasBeenPositive: Boolean? = null,
     var isVaccinated: Boolean? = null,
+    var state: UserState = UserState.Normal,
+    var messagingToken: String? = null,
 
     @Relationship(type = "MEMBER", direction = Relationship.Direction.OUTGOING)
     var contactNetworks: MutableList<Member> = mutableListOf()

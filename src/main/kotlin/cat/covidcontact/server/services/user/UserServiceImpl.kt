@@ -6,6 +6,7 @@ import cat.covidcontact.server.model.nodes.user.Occupation
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostUser
+import cat.covidcontact.server.security.encrypt
 
 class UserServiceImpl(
     private val userRepository: UserRepository,
@@ -42,6 +43,14 @@ class UserServiceImpl(
     @Synchronized
     override fun getUserData(email: String): User {
         return userRepository.findByEmail(email) ?: throw UserExceptions.userDataNotFound
+    }
+
+    @Synchronized
+    override fun registerMessagingToken(email: String, token: String) {
+        userRepository.findByEmail(email)?.let { user ->
+            user.messagingToken = token.encrypt()
+            userRepository.save(user)
+        }
     }
 
     @Synchronized

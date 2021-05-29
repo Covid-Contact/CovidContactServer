@@ -9,4 +9,10 @@ object InteractionExceptions {
         "Device not found",
         HttpStatus.NOT_FOUND
     )
+
+    val userNotFound = CovidContactException(
+        "I2",
+        "User not found",
+        HttpStatus.NOT_FOUND
+    )
 }

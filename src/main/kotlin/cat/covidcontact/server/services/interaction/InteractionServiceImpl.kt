@@ -3,18 +3,28 @@ package cat.covidcontact.server.services.interaction
 import cat.covidcontact.server.controllers.interaction.InteractionExceptions
 import cat.covidcontact.server.model.LimitParameters
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
+import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkState
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.interaction.Interaction
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
 import cat.covidcontact.server.model.nodes.interaction.UserInteraction
 import cat.covidcontact.server.model.nodes.user.User
+import cat.covidcontact.server.model.nodes.user.UserRepository
+import cat.covidcontact.server.model.nodes.user.UserState
 import cat.covidcontact.server.model.post.PostRead
+import cat.covidcontact.server.security.decrypt
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.Message
 import kotlin.math.max
 import kotlin.math.min
 
 class InteractionServiceImpl(
     private val deviceRepository: DeviceRepository,
-    private val interactionRepository: InteractionRepository
+    private val interactionRepository: InteractionRepository,
+    private val userRepository: UserRepository,
+    private val contactNetworkRepository: ContactNetworkRepository,
+    private val firebaseMessaging: FirebaseMessaging
 ) : InteractionService {
 
     @Synchronized
@@ -27,6 +37,44 @@ class InteractionServiceImpl(
         } else {
             registerInteractionsToContactNetworks(read, currentUserContactNetworks, currentUser)
         }
+    }
+
+    @Synchronized
+    override fun notifyPositive(email: String) {
+        userRepository.findByEmail(email)?.let { positiveUser ->
+            val sendingUsers: MutableSet<User> = mutableSetOf()
+
+            positiveUser.contactNetworks.forEach { member ->
+                val contactNetwork = member.contactNetwork
+                val currentTime = System.currentTimeMillis()
+                val periodStart = currentTime - LimitParameters.CONTAGIOUS_PERIOD
+
+                val interactions = interactionRepository.getInteractionsByContactNetworkName(
+                    contactNetwork.name
+                ).filter { interaction ->
+                    interaction.endDateTime == null ||
+                        (interaction.isDangerous!! &&
+                            interaction.startDateTime in periodStart..currentTime)
+                }
+
+                contactNetwork.state = ContactNetworkState.PositiveDetected
+                contactNetworkRepository.save(contactNetwork)
+
+                val nearContacts = interactions.getAllUsers()
+                val users = userRepository.findAllById(contactNetwork.memberEmails).onEach { user ->
+                    user.state = when (user) {
+                        in nearContacts -> UserState.Quarantine
+                        else -> UserState.Prevention
+                    }
+
+                    sendingUsers.add(user)
+                }
+
+                userRepository.saveAll(users)
+            }
+
+            sendingUsers.forEach { user -> sendCurrentState(user) }
+        } ?: throw InteractionExceptions.userNotFound
     }
 
     private fun registerSendEnding(
@@ -133,6 +181,17 @@ class InteractionServiceImpl(
         return device.users.find { it.isLogged }?.user
     }
 
+    private fun sendCurrentState(user: User) {
+        println("Sent message to ${user.email} with ${user.state}")
+        user.messagingToken?.let { token ->
+            val message = Message.builder()
+                .setToken(token.decrypt())
+                .putData("State", user.state.toString())
+                .build()
+            firebaseMessaging.send(message)
+        }
+    }
+
     private fun User.getContactNetworks(): List<ContactNetwork> =
         contactNetworks.map { it.contactNetwork }
 
@@ -144,4 +203,10 @@ class InteractionServiceImpl(
 
     private fun List<UserInteraction>.containsUser(user: User): Boolean =
         find { it.user.email == user.email } != null
+
+    private fun List<Interaction>.getAllUsers(): List<User> =
+        flatMap { interaction -> interaction.userInteractions }
+            .map { userInteraction -> userInteraction.user }
+            .toSet()
+            .toList()
 }
