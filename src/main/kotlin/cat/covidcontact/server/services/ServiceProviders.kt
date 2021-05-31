@@ -86,12 +86,10 @@ class ServiceProviders {
         contactNetworkRepository: ContactNetworkRepository,
         userRepository: UserRepository,
         numberCalculatorService: NumberCalculatorService,
-        firebaseMessaging: FirebaseMessaging
     ): ContactNetworkService = ContactNetworkServiceImpl(
         contactNetworkRepository,
         userRepository,
-        numberCalculatorService,
-        firebaseMessaging
+        numberCalculatorService
     )
 
     @Bean

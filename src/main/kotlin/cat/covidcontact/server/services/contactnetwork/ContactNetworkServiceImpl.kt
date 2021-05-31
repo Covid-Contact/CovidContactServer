@@ -11,13 +11,11 @@ import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostContactNetwork
 import cat.covidcontact.server.services.user.NumberCalculatorService
-import com.google.firebase.messaging.FirebaseMessaging
 
 class ContactNetworkServiceImpl(
     private val contactNetworkRepository: ContactNetworkRepository,
     private val userRepository: UserRepository,
-    private val numberCalculatorService: NumberCalculatorService,
-    private val firebaseMessaging: FirebaseMessaging
+    private val numberCalculatorService: NumberCalculatorService
 ) : ContactNetworkService {
 
     @Synchronized
@@ -32,7 +30,7 @@ class ContactNetworkServiceImpl(
                 if (contactNetworkExistsForUser) {
                     throw ContactNetworkExceptions.contactNetworkFoundForUser
                 }
-                createContactNetwork(postContactNetwork, ownerMessageToken, owner)
+                createContactNetwork(postContactNetwork, owner)
             } ?: throw UserExceptions.userDataNotFound
         } ?: throw ContactNetworkExceptions.ownerEmailNotFound
 
@@ -78,8 +76,7 @@ class ContactNetworkServiceImpl(
     @Synchronized
     override fun joinContactNetwork(
         contactNetworkName: String,
-        email: String,
-        messageToken: String
+        email: String
     ) {
         val user = userRepository.findByEmail(email)
         user?.let { currentUser ->
@@ -99,9 +96,25 @@ class ContactNetworkServiceImpl(
         } ?: throw UserExceptions.userDataNotFound
     }
 
+    @Synchronized
+    override fun exitContactNetwork(contactNetworkName: String, email: String) {
+        userRepository.findByEmail(email)?.let { user ->
+            contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+                ?.let { contactNetwork ->
+                    if (!isOwner(user, contactNetwork)) {
+                        removeMember(user, contactNetwork)
+                    }
+                } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
+        } ?: throw UserExceptions.userDataNotFound
+    }
+
+    private fun isOwner(user: User, contactNetwork: ContactNetwork) =
+        user.contactNetworks.find { member ->
+            member.contactNetwork.name == contactNetwork.name && member.isOwner
+        } != null
+
     private fun createContactNetwork(
         postContactNetwork: PostContactNetwork,
-        ownerMessageToken: String,
         owner: User
     ): ContactNetwork {
         val code = numberCalculatorService.generateRandomNumber()
@@ -125,6 +138,22 @@ class ContactNetworkServiceImpl(
         ++contactNetwork.members
         updateContactNetworkState(contactNetwork)
         return userRepository.save(user)
+    }
+
+    private fun removeMember(
+        user: User,
+        contactNetwork: ContactNetwork
+    ) {
+        user.contactNetworks.removeIf { member ->
+            member.contactNetwork.name == contactNetwork.name
+        }
+
+        userRepository.removeMember(user.email, contactNetwork.name)
+
+        contactNetwork.memberEmails.remove(user.email)
+        --contactNetwork.members
+        updateContactNetworkState(contactNetwork)
+        contactNetworkRepository.save(contactNetwork)
     }
 
     private fun updateContactNetworkState(contactNetwork: ContactNetwork) {

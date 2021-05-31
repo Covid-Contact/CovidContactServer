@@ -17,5 +17,7 @@ interface ContactNetworkService {
 
     fun getContactNetworkByAccessCode(accessCode: String): ContactNetwork
 
-    fun joinContactNetwork(contactNetworkName: String, email: String, messageToken: String)
+    fun joinContactNetwork(contactNetworkName: String, email: String)
+
+    fun exitContactNetwork(contactNetworkName: String, email: String)
 }

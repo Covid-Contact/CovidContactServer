@@ -1,9 +1,6 @@
 package cat.covidcontact.server.controllers.contactnetwork
 
-import cat.covidcontact.server.controllers.runGet
-import cat.covidcontact.server.controllers.runPost
-import cat.covidcontact.server.controllers.runPut
-import cat.covidcontact.server.controllers.runRequest
+import cat.covidcontact.server.controllers.*
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
 import cat.covidcontact.server.model.post.PostContactNetwork
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
@@ -61,8 +58,16 @@ class ContactNetworkController(
         @RequestParam(required = true) email: String
     ) = runPut {
         val contactNetworkName = parseContactNetworkName(name)
-        val messageToken = applicationUserService.getMessageToken(email)
-        contactNetworkService.joinContactNetwork(contactNetworkName, email, messageToken)
+        contactNetworkService.joinContactNetwork(contactNetworkName, email)
+    }
+
+    @DeleteMapping(ContactNetworkControllerUrls.EXIT_CONTACT_NETWORK)
+    fun exitContactNetwork(
+        @PathVariable("name") name: String,
+        @RequestParam(required = true) email: String
+    ) = runDelete {
+        val contactNetworkName = parseContactNetworkName(name)
+        contactNetworkService.exitContactNetwork(contactNetworkName, email)
     }
 
     private fun parseContactNetworkName(name: String) =
