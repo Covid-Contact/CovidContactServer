@@ -38,3 +38,7 @@ out/
 
 src/main/resources/application.properties
 
+src/main/kotlin/cat/covidcontact/server/controllers/contactnetwork/requests.http
+src/main/kotlin/cat/covidcontact/server/controllers/interaction/requests.http
+src/main/kotlin/cat/covidcontact/server/controllers/user/requests.http
+
