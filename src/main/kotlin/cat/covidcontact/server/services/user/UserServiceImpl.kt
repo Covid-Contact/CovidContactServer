@@ -1,6 +1,7 @@
 package cat.covidcontact.server.services.user
 
 import cat.covidcontact.server.controllers.user.UserExceptions
+import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.user.Marriage
 import cat.covidcontact.server.model.nodes.user.Occupation
 import cat.covidcontact.server.model.nodes.user.User
@@ -10,6 +11,7 @@ import cat.covidcontact.server.security.encrypt
 
 class UserServiceImpl(
     private val userRepository: UserRepository,
+    private val deviceRepository: DeviceRepository,
     private val numberCalculatorService: NumberCalculatorService
 ) : UserService {
 
@@ -78,5 +80,22 @@ class UserServiceImpl(
 
             userRepository.save(newUser)
         } ?: UserExceptions.userDataNotFound
+    }
+
+    @Synchronized
+    override fun makeLogOut(email: String, deviceId: String) {
+        userRepository.findByEmail(email)?.let { user ->
+            deviceRepository.findDeviceById(deviceId)?.let { device ->
+                device.users.find { userDevice -> userDevice.user.email == email }?.isLogged = false
+                deviceRepository.save(device)
+            } ?: throw UserExceptions.deviceNotFound
+        } ?: throw UserExceptions.userDataNotFound
+    }
+
+    @Synchronized
+    override fun deleteAccount(email: String) {
+        userRepository.findByEmail(email)?.let { user ->
+            userRepository.delete(user)
+        } ?: throw UserExceptions.userDataNotFound
     }
 }

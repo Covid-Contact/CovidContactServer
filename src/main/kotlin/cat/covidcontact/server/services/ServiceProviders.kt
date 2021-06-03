@@ -49,9 +49,12 @@ class ServiceProviders {
     @Bean
     fun provideUserService(
         userRepository: UserRepository,
+        deviceRepository: DeviceRepository,
         numberCalculatorService: NumberCalculatorService
     ): UserService = UserServiceImpl(
-        userRepository, numberCalculatorService
+        userRepository,
+        deviceRepository,
+        numberCalculatorService
     )
 
     @Bean

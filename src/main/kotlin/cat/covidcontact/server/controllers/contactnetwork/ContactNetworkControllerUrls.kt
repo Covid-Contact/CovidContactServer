@@ -9,4 +9,8 @@ object ContactNetworkControllerUrls {
     const val GET_CONTACT_NETWORK_BY_ACCESS_CODE = "/accessCode"
     const val JOIN_CONTACT_NETWORK = "/{name}/join"
     const val EXIT_CONTACT_NETWORK = "/{name}/exit"
+    const val DELETE_CONTACT_NETWORK = "/{name}/delete"
+    const val UPDATE_CONTACT_NETWORK_VISIBILITY = "/{name}/visibility"
+    const val UPDATE_CONTACT_NETWORK_PASSWORD = "/{name}/pasword"
+    const val UPDATE_CONTACT_NETWORK_IS_PASSWORD_PROTECTED = "/{name}/protected"
 }

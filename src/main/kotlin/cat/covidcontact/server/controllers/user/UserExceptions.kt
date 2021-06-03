@@ -15,4 +15,10 @@ object UserExceptions {
         "User data found",
         HttpStatus.BAD_REQUEST
     )
+
+    val deviceNotFound = CovidContactException(
+        "U3",
+        "Device not found",
+        HttpStatus.NOT_FOUND
+    )
 }

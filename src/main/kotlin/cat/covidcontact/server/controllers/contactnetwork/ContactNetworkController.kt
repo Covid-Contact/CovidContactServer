@@ -70,6 +70,45 @@ class ContactNetworkController(
         contactNetworkService.exitContactNetwork(contactNetworkName, email)
     }
 
+    @DeleteMapping(ContactNetworkControllerUrls.DELETE_CONTACT_NETWORK)
+    fun deleteContactNetwork(
+        @PathVariable("name") name: String,
+        @RequestParam(required = true) email: String
+    ) = runDelete {
+        val contactNetworkName = parseContactNetworkName(name)
+        contactNetworkService.deleteContactNetwork(contactNetworkName, email)
+    }
+
+    @PutMapping(ContactNetworkControllerUrls.UPDATE_CONTACT_NETWORK_VISIBILITY)
+    fun updateVisibility(
+        @PathVariable("name") name: String,
+        @RequestParam isVisible: Boolean,
+        @RequestParam(required = true) email: String
+    ) = runPut {
+        val contactNetworkName = parseContactNetworkName(name)
+        contactNetworkService.updateVisibility(contactNetworkName, email, isVisible)
+    }
+
+    @PutMapping(ContactNetworkControllerUrls.UPDATE_CONTACT_NETWORK_PASSWORD)
+    fun updatePassword(
+        @PathVariable("name") name: String,
+        @RequestParam password: String,
+        @RequestParam(required = true) email: String
+    ) = runPut {
+        val contactNetworkName = parseContactNetworkName(name)
+        contactNetworkService.updatePassword(contactNetworkName, password, email)
+    }
+
+    @PutMapping(ContactNetworkControllerUrls.UPDATE_CONTACT_NETWORK_IS_PASSWORD_PROTECTED)
+    fun updatePasswordProtected(
+        @PathVariable("name") name: String,
+        @RequestParam(required = true) isProtected: Boolean,
+        @RequestParam(required = true) email: String
+    ) = runPut {
+        val contactNetworkName = parseContactNetworkName(name)
+        contactNetworkService.updateIsPasswordProtected(contactNetworkName, isProtected, email)
+    }
+
     private fun parseContactNetworkName(name: String) =
         name.replace("%23", "#").replace("%20", " ")
 

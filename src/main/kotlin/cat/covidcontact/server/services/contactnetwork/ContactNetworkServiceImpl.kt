@@ -17,6 +17,10 @@ class ContactNetworkServiceImpl(
     private val userRepository: UserRepository,
     private val numberCalculatorService: NumberCalculatorService
 ) : ContactNetworkService {
+    private val ignoredContactNetworkStates = listOf(
+        ContactNetworkState.PositiveDetected,
+        ContactNetworkState.Deleted
+    )
 
     @Synchronized
     override fun createContactNetwork(
@@ -108,6 +112,37 @@ class ContactNetworkServiceImpl(
         } ?: throw UserExceptions.userDataNotFound
     }
 
+    @Synchronized
+    override fun deleteContactNetwork(name: String, email: String) =
+        runIfOwner(name, email) { contactNetwork ->
+            contactNetwork.state = ContactNetworkState.Deleted
+            contactNetworkRepository.save(contactNetwork)
+        }
+
+    @Synchronized
+    override fun updateVisibility(name: String, email: String, isVisible: Boolean) =
+        runIfOwner(name, email) { contactNetwork ->
+            contactNetwork.isVisible = isVisible
+            contactNetworkRepository.save(contactNetwork)
+        }
+
+    @Synchronized
+    override fun updatePassword(name: String, password: String, email: String) =
+        runIfOwner(name, email) { contactNetwork ->
+            contactNetwork.password = password
+            contactNetworkRepository.save(contactNetwork)
+        }
+
+    @Synchronized
+    override fun updateIsPasswordProtected(
+        name: String,
+        isProtected: Boolean,
+        email: String
+    ) = runIfOwner(name, email) { contactNetwork ->
+        contactNetwork.isPasswordProtected = isProtected
+        contactNetworkRepository.save(contactNetwork)
+    }
+
     private fun isOwner(user: User, contactNetwork: ContactNetwork) =
         user.contactNetworks.find { member ->
             member.contactNetwork.name == contactNetwork.name && member.isOwner
@@ -157,7 +192,7 @@ class ContactNetworkServiceImpl(
     }
 
     private fun updateContactNetworkState(contactNetwork: ContactNetwork) {
-        if (contactNetwork.state != ContactNetworkState.PositiveDetected) {
+        if (!ignoredContactNetworkStates.contains(contactNetwork.state)) {
             val maxPeopleRecommended = LimitParameters.MAX_PEOPLE_RECOMMENDED
             val almostLimit = (maxPeopleRecommended * 0.75).toInt()
 
@@ -170,5 +205,17 @@ class ContactNetworkServiceImpl(
                 }
             }
         }
+    }
+
+    private fun runIfOwner(name: String, email: String, onOwnerVerified: (ContactNetwork) -> Unit) {
+        contactNetworkRepository.findContactNetworkByName(name)?.let { contactNetwork ->
+            userRepository.findByEmail(email)?.let { user ->
+                if (!isOwner(user, contactNetwork)) {
+                    throw ContactNetworkExceptions.userIsNotOwner
+                }
+
+                onOwnerVerified(contactNetwork)
+            } ?: throw UserExceptions.userDataNotFound
+        } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
     }
 }
