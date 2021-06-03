@@ -57,8 +57,10 @@ class InteractionServiceImpl(
                             interaction.startDateTime in periodStart..currentTime)
                 }
 
-                contactNetwork.state = ContactNetworkState.PositiveDetected
-                contactNetworkRepository.save(contactNetwork)
+                if (contactNetwork.state != ContactNetworkState.Deleted) {
+                    contactNetwork.state = ContactNetworkState.PositiveDetected
+                    contactNetworkRepository.save(contactNetwork)
+                }
 
                 val nearContacts = interactions.getAllUsers()
                 val users = userRepository.findAllById(contactNetwork.memberEmails).onEach { user ->
