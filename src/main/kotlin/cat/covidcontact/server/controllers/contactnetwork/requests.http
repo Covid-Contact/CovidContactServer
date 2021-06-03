@@ -70,3 +70,8 @@ Content-Type: application/json
 ###
 DELETE http://localhost:8080/contactnetwork/VilaTeam%231850/exit?email=apinto.developer@gmail.com
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyNTYzMTQxMTU0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.mPzlM-VA2Vemb_Oq6zVaz_BMpv5YEIIcZpQfYOs-jSE4HZ2hufr50dEfu9exj23DporMHRC57xR6xpJ1XaniSQ==
+
+###
+DELETE http://covidcontact.cat:8080/contactnetwork/VilaTeam%231850/delete?email=apinto.developer@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyNTYzMTQxMTU0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.mPzlM-VA2Vemb_Oq6zVaz_BMpv5YEIIcZpQfYOs-jSE4HZ2hufr50dEfu9exj23DporMHRC57xR6xpJ1XaniSQ==
+
