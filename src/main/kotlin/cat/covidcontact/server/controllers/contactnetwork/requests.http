@@ -49,13 +49,13 @@ GET http://localhost:8080/contactnetwork/accessCode?code=222857
 Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIwMDE5ODQ3NjQwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.hRfdyd6V4MgfeI78QqlDX7puwspiv-6gwbKunH_X7TD6DFhRLDQvQw0__2wY3G4lAVygLUpskrHzBVbOSh2NSA==
 
 ###
-PUT http://localhost:8080/contactnetwork/Fibers%231012/join?email=apintogil@gmail.com
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIwMDE5ODQ3NjQwIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.hRfdyd6V4MgfeI78QqlDX7puwspiv-6gwbKunH_X7TD6DFhRLDQvQw0__2wY3G4lAVygLUpskrHzBVbOSh2NSA==
+PUT http://localhost:8080/contactnetwork/VilaTeam%231850/join?email=apinto.developer@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyNTYzMTQxMTU0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.mPzlM-VA2Vemb_Oq6zVaz_BMpv5YEIIcZpQfYOs-jSE4HZ2hufr50dEfu9exj23DporMHRC57xR6xpJ1XaniSQ==
 
 
 ###
 POST http://localhost:8080/contactnetwork/
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIxODgwMjc1OTcxIiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.o-msNROMq3kNmPEbB_7RPMUfzXVmukkOQIrp_91xHMhk6joxL8giCbdLrbbXRsr9Me4yxYhR0NN1Y2OntutUxg==
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyNTYzMTQxMTU0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.mPzlM-VA2Vemb_Oq6zVaz_BMpv5YEIIcZpQfYOs-jSE4HZ2hufr50dEfu9exj23DporMHRC57xR6xpJ1XaniSQ==
 Content-Type: application/json
 
 {
@@ -66,3 +66,12 @@ Content-Type: application/json
   "is_visible": false,
   "is_password_protected": true
 }
+
+###
+DELETE http://localhost:8080/contactnetwork/VilaTeam%231850/exit?email=apinto.developer@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyNTYzMTQxMTU0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.mPzlM-VA2Vemb_Oq6zVaz_BMpv5YEIIcZpQfYOs-jSE4HZ2hufr50dEfu9exj23DporMHRC57xR6xpJ1XaniSQ==
+
+###
+DELETE http://covidcontact.cat:8080/contactnetwork/VilaTeam%231850/delete?email=apinto.developer@gmail.com
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyNTYzMTQxMTU0Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.mPzlM-VA2Vemb_Oq6zVaz_BMpv5YEIIcZpQfYOs-jSE4HZ2hufr50dEfu9exj23DporMHRC57xR6xpJ1XaniSQ==
+
