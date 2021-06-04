@@ -6,6 +6,7 @@ import cat.covidcontact.server.model.authentication.verification.VerificationRep
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
+import cat.covidcontact.server.model.nodes.location.CountryRepository
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
@@ -101,12 +102,14 @@ class ServiceProviders {
         interactionRepository: InteractionRepository,
         userRepository: UserRepository,
         contactNetworkRepository: ContactNetworkRepository,
+        countryRepository: CountryRepository,
         firebaseMessaging: FirebaseMessaging
     ): InteractionService = InteractionServiceImpl(
         deviceRepository,
         interactionRepository,
         userRepository,
         contactNetworkRepository,
+        countryRepository,
         firebaseMessaging
     )
 }
