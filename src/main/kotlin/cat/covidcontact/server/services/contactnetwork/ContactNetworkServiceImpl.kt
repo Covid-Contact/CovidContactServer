@@ -23,10 +23,7 @@ class ContactNetworkServiceImpl(
     )
 
     @Synchronized
-    override fun createContactNetwork(
-        postContactNetwork: PostContactNetwork,
-        ownerMessageToken: String
-    ): ContactNetwork {
+    override fun createContactNetwork(postContactNetwork: PostContactNetwork): ContactNetwork {
         return postContactNetwork.ownerEmail?.let { ownerEmail ->
             userRepository.findByEmail(ownerEmail)?.let { owner ->
                 val contactNetworkExistsForUser = owner.contactNetworks

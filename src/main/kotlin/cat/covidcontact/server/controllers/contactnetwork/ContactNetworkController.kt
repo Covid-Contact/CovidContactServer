@@ -17,11 +17,7 @@ class ContactNetworkController(
 
     @PostMapping(ContactNetworkControllerUrls.CREATE_CONTACT_NETWORK)
     fun createContactNetwork(@RequestBody postContactNetwork: PostContactNetwork) = runPost {
-        val messageToken = applicationUserService.getMessageToken(postContactNetwork.ownerEmail!!)
-        val contactNetwork = contactNetworkService.createContactNetwork(
-            postContactNetwork,
-            messageToken
-        )
+        val contactNetwork = contactNetworkService.createContactNetwork(postContactNetwork)
         contactNetwork.toPost()
     }
 
