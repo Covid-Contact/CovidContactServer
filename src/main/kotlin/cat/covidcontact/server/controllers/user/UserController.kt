@@ -112,5 +112,6 @@ class UserController(
     @DeleteMapping(UserControllerUrls.DELETE)
     fun deleteAccount(@RequestParam(required = true) email: String) = runDelete {
         userService.deleteAccount(email)
+        applicationUserService.deleteAccount(email)
     }
 }

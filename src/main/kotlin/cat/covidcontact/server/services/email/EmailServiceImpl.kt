@@ -10,7 +10,7 @@ class EmailServiceImpl(private val mailSender: JavaMailSenderImpl) : EmailServic
     override fun sendConfirmationEmail(destination: String, validationCode: String) {
         val subject = "Confirm your email"
         val text = "Please go to the next link to validate your account: " +
-                "http://covidcontact.cat:8080/user/validate?code=$validationCode"
+            "http://covidcontact.cat:8080/user/validate?code=$validationCode"
         sendEmail(destination, subject, text)
     }
 

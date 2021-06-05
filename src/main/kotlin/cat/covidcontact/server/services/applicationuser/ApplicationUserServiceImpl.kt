@@ -3,8 +3,6 @@ package cat.covidcontact.server.services.applicationuser
 import cat.covidcontact.server.controllers.user.ApplicationUserExceptions
 import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUser
 import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
-import cat.covidcontact.server.model.authentication.message.Message
-import cat.covidcontact.server.model.authentication.message.MessageRepository
 import cat.covidcontact.server.model.authentication.verification.Verification
 import cat.covidcontact.server.model.authentication.verification.VerificationRepository
 import cat.covidcontact.server.services.email.EmailService
@@ -14,7 +12,6 @@ class ApplicationUserServiceImpl(
     private val emailService: EmailService,
     private val applicationUserRepository: ApplicationUserRepository,
     private val verificationRepository: VerificationRepository,
-    private val messageRepository: MessageRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : ApplicationUserService {
 
@@ -56,15 +53,9 @@ class ApplicationUserServiceImpl(
     }
 
     @Synchronized
-    override fun registerMessageToken(email: String, token: String) {
+    override fun deleteAccount(email: String) {
         val user = findUserByEmail(email)
-        messageRepository.save(Message(user.id, token))
-    }
-
-    @Synchronized
-    override fun getMessageToken(email: String): String {
-        val user = findUserByEmail(email)
-        return messageRepository.findById(user.id).get().token
+        applicationUserRepository.delete(user)
     }
 
     private fun findUserByEmail(email: String): ApplicationUser {

@@ -1,7 +1,6 @@
 package cat.covidcontact.server.services
 
 import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
-import cat.covidcontact.server.model.authentication.message.MessageRepository
 import cat.covidcontact.server.model.authentication.verification.VerificationRepository
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
@@ -37,13 +36,11 @@ class ServiceProviders {
         emailService: EmailService,
         applicationUserRepository: ApplicationUserRepository,
         verificationRepository: VerificationRepository,
-        messageRepository: MessageRepository,
         bCryptPasswordEncoder: BCryptPasswordEncoder
     ): ApplicationUserService = ApplicationUserServiceImpl(
         emailService,
         applicationUserRepository,
         verificationRepository,
-        messageRepository,
         bCryptPasswordEncoder
     )
 
