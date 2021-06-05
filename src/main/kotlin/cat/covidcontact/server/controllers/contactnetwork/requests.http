@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ###
 GET http://localhost:8080/contactnetwork/?email=apintogil@gmail.com
-Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjE4NTkyNjAzODU5Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.DJt2O2ufrdkwZvDnXzN8NudbvAj0PzPKd6amBw0hWrRPmcdyW7sUBUlhNhTMbYVU_igP0PUXKNqVEcAAN7aNKg==
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOiIxNjIyOTY5NzI0Njk4Iiwic3ViIjoiYXBpbnRvZ2lsQGdtYWlsLmNvbSJ9.6LUY4qG0EF5fi_WHS_fgCkwjOd6BIUmW_L9jHKT9kadvISzeu3f37wnm3mxOkaea2kqA73FmmQqjle8k6ZRrvg==
 
 ###
 GET http://covidcontact.cat:8080/contactnetwork/?email=apintogil@gmail.com

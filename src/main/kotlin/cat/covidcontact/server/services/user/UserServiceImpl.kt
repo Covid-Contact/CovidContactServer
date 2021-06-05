@@ -98,4 +98,8 @@ class UserServiceImpl(
             userRepository.delete(user)
         } ?: throw UserExceptions.userDataNotFound
     }
+
+    override fun getAllNonOwnerMembers(contactNetworkName: String): List<User> {
+        return userRepository.getAllNonOwnerMembersFromContactNetwork(contactNetworkName)
+    }
 }

@@ -73,14 +73,15 @@ class InteractionServiceImpl(
                 }
 
                 val nearContacts = interactions.getAllUsers()
-                val users = userRepository.findAllById(contactNetwork.memberEmails).onEach { user ->
-                    user.state = when (user) {
-                        in nearContacts -> UserState.Quarantine
-                        else -> UserState.Prevention
-                    }
+                val users = userRepository.getAllMembersFromContactNetwork(contactNetwork.name)
+                    .onEach { user ->
+                        user.state = when (user) {
+                            in nearContacts -> UserState.Quarantine
+                            else -> UserState.Prevention
+                        }
 
-                    sendingUsers.add(user)
-                }
+                        sendingUsers.add(user)
+                    }
 
                 userRepository.saveAll(users)
             }

@@ -41,6 +41,7 @@ class ContactNetworkServiceImpl(
     override fun getContactNetworksFromUser(email: String): List<ContactNetwork> {
         val user = userRepository.findByEmail(email)
         return user?.contactNetworks?.map { it.contactNetwork }
+            ?.filter { it.state != ContactNetworkState.Deleted }
             ?: throw UserExceptions.userDataNotFound
     }
 
@@ -113,7 +114,7 @@ class ContactNetworkServiceImpl(
     override fun deleteContactNetwork(name: String, email: String) =
         runIfOwner(name, email) { contactNetwork ->
             contactNetwork.state = ContactNetworkState.Deleted
-            contactNetworkRepository.save(contactNetwork)
+            contactNetworkRepository.setStateToDeleted(contactNetwork.name)
         }
 
     @Synchronized
@@ -138,6 +139,27 @@ class ContactNetworkServiceImpl(
     ) = runIfOwner(name, email) { contactNetwork ->
         contactNetwork.isPasswordProtected = isProtected
         contactNetworkRepository.save(contactNetwork)
+    }
+
+    @Synchronized
+    override fun getContactNetworkIfNotMember(
+        contactNetworkName: String,
+        email: String
+    ): List<ContactNetwork> {
+        val members = userRepository.getAllMembersFromContactNetwork(contactNetworkName)
+        return if (members.find { user -> user.email == email } == null) {
+            contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+                ?.let { contactNetwork -> listOf(contactNetwork) } ?: listOf()
+        } else {
+            listOf()
+        }
+    }
+
+    @Synchronized
+    override fun deleteMember(contactNetworkName: String, memberEmail: String, email: String) {
+        runIfOwner(contactNetworkName, email) {
+            userRepository.removeMember(memberEmail, contactNetworkName)
+        }
     }
 
     private fun isOwner(user: User, contactNetwork: ContactNetwork) =
@@ -166,7 +188,6 @@ class ContactNetworkServiceImpl(
         isOwner: Boolean = false
     ): User {
         user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = isOwner))
-        contactNetwork.memberEmails.add(user.email)
         ++contactNetwork.members
         updateContactNetworkState(contactNetwork)
         return userRepository.save(user)
@@ -182,7 +203,6 @@ class ContactNetworkServiceImpl(
 
         userRepository.removeMember(user.email, contactNetwork.name)
 
-        contactNetwork.memberEmails.remove(user.email)
         --contactNetwork.members
         updateContactNetworkState(contactNetwork)
         contactNetworkRepository.save(contactNetwork)

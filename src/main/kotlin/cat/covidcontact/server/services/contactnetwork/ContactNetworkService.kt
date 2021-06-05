@@ -15,4 +15,10 @@ interface ContactNetworkService {
     fun updateVisibility(name: String, email: String, isVisible: Boolean)
     fun updatePassword(name: String, password: String, email: String)
     fun updateIsPasswordProtected(name: String, isProtected: Boolean, email: String)
+    fun getContactNetworkIfNotMember(
+        contactNetworkName: String,
+        email: String
+    ): List<ContactNetwork>
+
+    fun deleteMember(contactNetworkName: String, memberEmail: String, email: String)
 }

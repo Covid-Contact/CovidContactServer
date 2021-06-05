@@ -13,4 +13,7 @@ object ContactNetworkControllerUrls {
     const val UPDATE_CONTACT_NETWORK_VISIBILITY = "/{name}/visibility"
     const val UPDATE_CONTACT_NETWORK_PASSWORD = "/{name}/pasword"
     const val UPDATE_CONTACT_NETWORK_IS_PASSWORD_PROTECTED = "/{name}/protected"
+    const val GET_CONTACT_NETWORK_IF_NOT_MEMBER = "/{name}/nomember"
+    const val GET_ALL_NON_OWNER_MEMBERS = "/{name}/noownermembers"
+    const val DELETE_MEMBER = "/{name}/member"
 }
