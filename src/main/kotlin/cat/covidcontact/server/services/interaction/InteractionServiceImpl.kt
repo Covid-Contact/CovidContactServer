@@ -14,12 +14,9 @@ import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.nodes.user.UserState
 import cat.covidcontact.server.model.post.PostRead
-import cat.covidcontact.server.security.decrypt
 import cat.covidcontact.server.services.interaction.geocoding.AddressComponentsResponse
-import cat.covidcontact.server.services.interaction.geocoding.GeocodingResponse
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.Message
-import org.springframework.boot.web.client.RestTemplateBuilder
+import cat.covidcontact.server.services.location.LocationService
+import cat.covidcontact.server.services.messaging.MessagingService
 import kotlin.math.max
 import kotlin.math.min
 
@@ -29,11 +26,9 @@ class InteractionServiceImpl(
     private val userRepository: UserRepository,
     private val contactNetworkRepository: ContactNetworkRepository,
     private val countryRepository: CountryRepository,
-    private val firebaseMessaging: FirebaseMessaging
+    private val locationService: LocationService,
+    private val messagingService: MessagingService
 ) : InteractionService {
-    private val restTemplate = RestTemplateBuilder().build()
-    private val baseUrl = "https://maps.googleapis.com/maps/api/geocode/json"
-    private val geocodingKey = System.getenv("COVID_CONTACT_MAPS_KEY")
 
     @Synchronized
     override fun addRead(read: PostRead) {
@@ -215,47 +210,46 @@ class InteractionServiceImpl(
     private fun sendCurrentState(user: User) {
         println("Sent message to ${user.email} with ${user.state}")
         user.messagingToken?.let { token ->
-            val message = Message.builder()
-                .setToken(token.decrypt())
-                .putData("State", user.state.toString())
-                .build()
-            firebaseMessaging.send(message)
+            messagingService.sendMessage(token, STATE, user.state.toString())
         }
     }
 
     private fun addLocation(read: PostRead, interactions: Set<Interaction>) {
-        val latLng = "${read.lat},${read.lon}"
-        val url = "$baseUrl?latlng=$latLng&key=$geocodingKey"
-        val response = restTemplate.getForObject(url, GeocodingResponse::class.java)
-        val addressComponents = response?.result?.first()?.addressComponents
+        if (read.lat != null && read.lon != null) {
+            val locationResponse = locationService.getLocationFromCoordinates(
+                lat = read.lat!!,
+                lon = read.lon!!
+            )
 
-        val countryName = addressComponents?.findComponent(COUNTRY)
-        val regionName = addressComponents?.findComponent(REGION)
-        val provinceName = addressComponents?.findComponent(PROVINCE)
-        val cityName = addressComponents?.findComponent(CITY)
+            val countryName = locationResponse.country
+            val regionName = locationResponse.region
+            val provinceName = locationResponse.province
+            val cityName = locationResponse.city
 
-        if (!countryName.isNullOrEmpty() && !regionName.isNullOrEmpty()
-            && !provinceName.isNullOrEmpty() && !cityName.isNullOrEmpty()
-        ) {
-            val country = countryRepository.findCountryByName(countryName) ?: Country(countryName)
+            if (!countryName.isNullOrEmpty() && !regionName.isNullOrEmpty()
+                && !provinceName.isNullOrEmpty() && !cityName.isNullOrEmpty()
+            ) {
+                val country =
+                    countryRepository.findCountryByName(countryName) ?: Country(countryName)
 
-            val region = country.regions.find { region -> region.name == regionName }
-                ?: Region(regionName).also { region ->
-                    country.regions.add(region)
-                }
+                val region = country.regions.find { region -> region.name == regionName }
+                    ?: Region(regionName).also { region ->
+                        country.regions.add(region)
+                    }
 
-            val province = region.provinces.find { province -> province.name == provinceName }
-                ?: Province(provinceName).also { province ->
-                    region.provinces.add(province)
-                }
+                val province = region.provinces.find { province -> province.name == provinceName }
+                    ?: Province(provinceName).also { province ->
+                        region.provinces.add(province)
+                    }
 
-            val city = province.cities.find { city -> city.name == cityName }
-                ?: City(cityName).also { city ->
-                    province.cities.add(city)
-                }
+                val city = province.cities.find { city -> city.name == cityName }
+                    ?: City(cityName).also { city ->
+                        province.cities.add(city)
+                    }
 
-            city.interactions.addAll(interactions)
-            countryRepository.save(country)
+                city.interactions.addAll(interactions)
+                countryRepository.save(country)
+            }
         }
     }
 
@@ -281,9 +275,6 @@ class InteractionServiceImpl(
             .toList()
 
     companion object {
-        private const val COUNTRY = "country"
-        private const val REGION = "administrative_area_level_1"
-        private const val PROVINCE = "administrative_area_level_2"
-        private const val CITY = "locality"
+        private const val STATE = "State"
     }
 }

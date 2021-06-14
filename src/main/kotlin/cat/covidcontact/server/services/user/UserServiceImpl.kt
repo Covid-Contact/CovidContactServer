@@ -2,17 +2,21 @@ package cat.covidcontact.server.services.user
 
 import cat.covidcontact.server.controllers.user.UserExceptions
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
+import cat.covidcontact.server.model.nodes.location.*
 import cat.covidcontact.server.model.nodes.user.Marriage
 import cat.covidcontact.server.model.nodes.user.Occupation
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostUser
 import cat.covidcontact.server.security.encrypt
+import cat.covidcontact.server.services.location.LocationService
 
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val deviceRepository: DeviceRepository,
-    private val numberCalculatorService: NumberCalculatorService
+    private val countryRepository: CountryRepository,
+    private val numberCalculatorService: NumberCalculatorService,
+    private val locationService: LocationService
 ) : UserService {
 
     @Synchronized
@@ -24,19 +28,21 @@ class UserServiceImpl(
         val usernameNumber = numberCalculatorService.generateRandomNumber()
         user.username = "${user.username}#$usernameNumber"
 
+        val city = user.city?.let { cityName -> getCity(cityName) }
+
         val userNode = with(user) {
             User(
-                email,
-                username,
-                gender,
-                birthDate,
-                city,
-                studies,
-                occupation,
-                marriage,
-                children,
-                hasBeenPositive,
-                isVaccinated
+                email = email,
+                username = username,
+                gender = gender,
+                birthDate = birthDate,
+                studies = studies,
+                occupation = occupation,
+                marriage = marriage,
+                children = children,
+                hasBeenPositive = hasBeenPositive,
+                isVaccinated = isVaccinated,
+                city = city
             )
         }
         userRepository.save(userNode)
@@ -68,7 +74,7 @@ class UserServiceImpl(
     ) {
         userRepository.findByEmail(newEmail)?.let { user ->
             val newUser = user.apply {
-                city = newCity ?: city
+                city = newCity?.let { cityName -> getCity(cityName) }
                 studies = newStudies ?: studies
                 occupation = newOccupation?.let { occupation -> Occupation.valueOf(occupation) }
                     ?: occupation
@@ -101,5 +107,40 @@ class UserServiceImpl(
 
     override fun getAllNonOwnerMembers(contactNetworkName: String): List<User> {
         return userRepository.getAllNonOwnerMembersFromContactNetwork(contactNetworkName)
+    }
+
+    private fun getCity(name: String): City? {
+        val locationResponse = locationService.getLocationFromName(name)
+
+        val countryName = locationResponse.country
+        val regionName = locationResponse.region
+        val provinceName = locationResponse.province
+        val cityName = locationResponse.city
+
+        return if (!countryName.isNullOrEmpty() && !regionName.isNullOrEmpty()
+            && !provinceName.isNullOrEmpty() && !cityName.isNullOrEmpty()
+        ) {
+            val country = countryRepository.findCountryByName(countryName) ?: Country(countryName)
+
+            val region = country.regions.find { region -> region.name == regionName }
+                ?: Region(regionName).also { region ->
+                    country.regions.add(region)
+                }
+
+            val province = region.provinces.find { province -> province.name == provinceName }
+                ?: Province(provinceName).also { province ->
+                    region.provinces.add(province)
+                }
+
+            val city = province.cities.find { city -> city.name == cityName }
+                ?: City(cityName).also { city ->
+                    province.cities.add(city)
+                }
+
+            countryRepository.save(country)
+            city
+        } else {
+            null
+        }
     }
 }

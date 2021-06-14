@@ -51,7 +51,7 @@ class UserController(
                 username,
                 gender,
                 birthDate,
-                city,
+                city?.name,
                 studies,
                 occupation,
                 marriage,

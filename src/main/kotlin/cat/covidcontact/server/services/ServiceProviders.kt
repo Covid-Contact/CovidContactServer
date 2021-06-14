@@ -17,6 +17,10 @@ import cat.covidcontact.server.services.email.EmailService
 import cat.covidcontact.server.services.email.EmailServiceImpl
 import cat.covidcontact.server.services.interaction.InteractionService
 import cat.covidcontact.server.services.interaction.InteractionServiceImpl
+import cat.covidcontact.server.services.location.LocationService
+import cat.covidcontact.server.services.location.LocationServiceImpl
+import cat.covidcontact.server.services.messaging.MessagingService
+import cat.covidcontact.server.services.messaging.MessagingServiceImpl
 import cat.covidcontact.server.services.user.NumberCalculatorService
 import cat.covidcontact.server.services.user.NumberCalculatorServiceImpl
 import cat.covidcontact.server.services.user.UserService
@@ -48,11 +52,15 @@ class ServiceProviders {
     fun provideUserService(
         userRepository: UserRepository,
         deviceRepository: DeviceRepository,
-        numberCalculatorService: NumberCalculatorService
+        countryRepository: CountryRepository,
+        numberCalculatorService: NumberCalculatorService,
+        locationService: LocationService
     ): UserService = UserServiceImpl(
         userRepository,
         deviceRepository,
-        numberCalculatorService
+        countryRepository,
+        numberCalculatorService,
+        locationService
     )
 
     @Bean
@@ -100,13 +108,25 @@ class ServiceProviders {
         userRepository: UserRepository,
         contactNetworkRepository: ContactNetworkRepository,
         countryRepository: CountryRepository,
-        firebaseMessaging: FirebaseMessaging
+        locationService: LocationService,
+        messagingService: MessagingService
     ): InteractionService = InteractionServiceImpl(
         deviceRepository,
         interactionRepository,
         userRepository,
         contactNetworkRepository,
         countryRepository,
+        locationService,
+        messagingService
+    )
+
+    @Bean
+    fun provideLocationService(): LocationService = LocationServiceImpl()
+
+    @Bean
+    fun provideMessagingService(
+        firebaseMessaging: FirebaseMessaging
+    ): MessagingService = MessagingServiceImpl(
         firebaseMessaging
     )
 }
