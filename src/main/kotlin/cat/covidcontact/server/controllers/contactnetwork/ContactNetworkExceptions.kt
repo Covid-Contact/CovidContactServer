@@ -39,4 +39,10 @@ object ContactNetworkExceptions {
         "The user has already joined this contact network",
         HttpStatus.BAD_REQUEST
     )
+
+    val userIsNotOwner = CovidContactException(
+        "CN7",
+        "The user is not the owner",
+        HttpStatus.BAD_REQUEST
+    )
 }

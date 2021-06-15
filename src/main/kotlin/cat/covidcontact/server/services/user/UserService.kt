@@ -17,4 +17,8 @@ interface UserService {
         newPositive: Boolean?,
         newVaccinated: Boolean?
     )
+
+    fun makeLogOut(email: String, deviceId: String)
+    fun deleteAccount(email: String)
+    fun getAllNonOwnerMembers(contactNetworkName: String): List<User>
 }

@@ -1,11 +1,11 @@
 package cat.covidcontact.server.services
 
 import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
-import cat.covidcontact.server.model.authentication.message.MessageRepository
 import cat.covidcontact.server.model.authentication.verification.VerificationRepository
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
+import cat.covidcontact.server.model.nodes.location.CountryRepository
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
@@ -17,6 +17,10 @@ import cat.covidcontact.server.services.email.EmailService
 import cat.covidcontact.server.services.email.EmailServiceImpl
 import cat.covidcontact.server.services.interaction.InteractionService
 import cat.covidcontact.server.services.interaction.InteractionServiceImpl
+import cat.covidcontact.server.services.location.LocationService
+import cat.covidcontact.server.services.location.LocationServiceImpl
+import cat.covidcontact.server.services.messaging.MessagingService
+import cat.covidcontact.server.services.messaging.MessagingServiceImpl
 import cat.covidcontact.server.services.user.NumberCalculatorService
 import cat.covidcontact.server.services.user.NumberCalculatorServiceImpl
 import cat.covidcontact.server.services.user.UserService
@@ -36,22 +40,27 @@ class ServiceProviders {
         emailService: EmailService,
         applicationUserRepository: ApplicationUserRepository,
         verificationRepository: VerificationRepository,
-        messageRepository: MessageRepository,
         bCryptPasswordEncoder: BCryptPasswordEncoder
     ): ApplicationUserService = ApplicationUserServiceImpl(
         emailService,
         applicationUserRepository,
         verificationRepository,
-        messageRepository,
         bCryptPasswordEncoder
     )
 
     @Bean
     fun provideUserService(
         userRepository: UserRepository,
-        numberCalculatorService: NumberCalculatorService
+        deviceRepository: DeviceRepository,
+        countryRepository: CountryRepository,
+        numberCalculatorService: NumberCalculatorService,
+        locationService: LocationService
     ): UserService = UserServiceImpl(
-        userRepository, numberCalculatorService
+        userRepository,
+        deviceRepository,
+        countryRepository,
+        numberCalculatorService,
+        locationService
     )
 
     @Bean
@@ -98,12 +107,26 @@ class ServiceProviders {
         interactionRepository: InteractionRepository,
         userRepository: UserRepository,
         contactNetworkRepository: ContactNetworkRepository,
-        firebaseMessaging: FirebaseMessaging
+        countryRepository: CountryRepository,
+        locationService: LocationService,
+        messagingService: MessagingService
     ): InteractionService = InteractionServiceImpl(
         deviceRepository,
         interactionRepository,
         userRepository,
         contactNetworkRepository,
+        countryRepository,
+        locationService,
+        messagingService
+    )
+
+    @Bean
+    fun provideLocationService(): LocationService = LocationServiceImpl()
+
+    @Bean
+    fun provideMessagingService(
+        firebaseMessaging: FirebaseMessaging
+    ): MessagingService = MessagingServiceImpl(
         firebaseMessaging
     )
 }

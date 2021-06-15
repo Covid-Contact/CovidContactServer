@@ -11,5 +11,11 @@ data class PostRead(
     var deviceIds: List<String>,
 
     @JsonProperty("date_time")
-    var dateTime: Long
+    var dateTime: Long,
+
+    @JsonProperty("lat")
+    var lat: Double? = null,
+
+    @JsonProperty("lon")
+    var lon: Double? = null
 ) : Serializable

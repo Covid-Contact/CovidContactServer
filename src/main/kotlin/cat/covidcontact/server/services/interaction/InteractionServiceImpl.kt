@@ -9,13 +9,14 @@ import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.interaction.Interaction
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
 import cat.covidcontact.server.model.nodes.interaction.UserInteraction
+import cat.covidcontact.server.model.nodes.location.*
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.nodes.user.UserState
 import cat.covidcontact.server.model.post.PostRead
-import cat.covidcontact.server.security.decrypt
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.Message
+import cat.covidcontact.server.services.interaction.geocoding.AddressComponentsResponse
+import cat.covidcontact.server.services.location.LocationService
+import cat.covidcontact.server.services.messaging.MessagingService
 import kotlin.math.max
 import kotlin.math.min
 
@@ -24,7 +25,9 @@ class InteractionServiceImpl(
     private val interactionRepository: InteractionRepository,
     private val userRepository: UserRepository,
     private val contactNetworkRepository: ContactNetworkRepository,
-    private val firebaseMessaging: FirebaseMessaging
+    private val countryRepository: CountryRepository,
+    private val locationService: LocationService,
+    private val messagingService: MessagingService
 ) : InteractionService {
 
     @Synchronized
@@ -32,10 +35,14 @@ class InteractionServiceImpl(
         val currentUser = getUserFromDevice(read.currentDeviceId) ?: return
         val currentUserContactNetworks = currentUser.getContactNetworks()
 
-        if (read.deviceIds.isEmpty()) {
+        val interactions = if (read.deviceIds.isEmpty()) {
             registerSendEnding(read, currentUser, currentUserContactNetworks)
         } else {
             registerInteractionsToContactNetworks(read, currentUserContactNetworks, currentUser)
+        }
+
+        if (read.lat != null && read.lon != null) {
+            addLocation(read, interactions)
         }
     }
 
@@ -57,18 +64,21 @@ class InteractionServiceImpl(
                             interaction.startDateTime in periodStart..currentTime)
                 }
 
-                contactNetwork.state = ContactNetworkState.PositiveDetected
-                contactNetworkRepository.save(contactNetwork)
+                if (contactNetwork.state != ContactNetworkState.Deleted) {
+                    contactNetwork.state = ContactNetworkState.PositiveDetected
+                    contactNetworkRepository.save(contactNetwork)
+                }
 
                 val nearContacts = interactions.getAllUsers()
-                val users = userRepository.findAllById(contactNetwork.memberEmails).onEach { user ->
-                    user.state = when (user) {
-                        in nearContacts -> UserState.Quarantine
-                        else -> UserState.Prevention
-                    }
+                val users = userRepository.getAllMembersFromContactNetwork(contactNetwork.name)
+                    .onEach { user ->
+                        user.state = when (user) {
+                            in nearContacts -> UserState.Quarantine
+                            else -> UserState.Prevention
+                        }
 
-                    sendingUsers.add(user)
-                }
+                        sendingUsers.add(user)
+                    }
 
                 userRepository.saveAll(users)
             }
@@ -81,7 +91,9 @@ class InteractionServiceImpl(
         read: PostRead,
         user: User,
         contactNetworks: List<ContactNetwork>
-    ) {
+    ): Set<Interaction> {
+        val currentInteractions: MutableSet<Interaction> = mutableSetOf()
+
         contactNetworks.forEach { contactNetwork ->
             val interactions = interactionRepository.getInteractionsByContactNetworkName(
                 contactNetwork.name
@@ -91,8 +103,11 @@ class InteractionServiceImpl(
                 finishUserSending(interaction, user, read)
             }
 
-            interactionRepository.saveAll(interactions)
+            val savedInteractions = interactionRepository.saveAll(interactions)
+            currentInteractions.addAll(savedInteractions)
         }
+
+        return currentInteractions
     }
 
     private fun finishUserSending(
@@ -117,16 +132,27 @@ class InteractionServiceImpl(
         read: PostRead,
         currentUserContactNetworks: List<ContactNetwork>,
         currentUser: User
-    ) {
+    ): Set<Interaction> {
+        val currentInteractions: MutableSet<Interaction> = mutableSetOf()
+
         read.deviceIds.forEach { deviceId ->
             val user = getUserFromDevice(deviceId) ?: throw InteractionExceptions.deviceNotFound
             val contactNetworks = user.getContactNetworks()
             val commonContactNetworks = currentUserContactNetworks intersect contactNetworks
 
             commonContactNetworks.forEach { contactNetwork ->
-                registerInteraction(contactNetwork, currentUser, read, user)
+                val savedInteractions = registerInteraction(
+                    contactNetwork = contactNetwork,
+                    currentUser = currentUser,
+                    read = read,
+                    user = user
+                )
+
+                currentInteractions.addAll(savedInteractions)
             }
         }
+
+        return currentInteractions
     }
 
     private fun registerInteraction(
@@ -134,7 +160,7 @@ class InteractionServiceImpl(
         currentUser: User,
         read: PostRead,
         user: User
-    ) {
+    ): List<Interaction> {
         val interactions = interactionRepository.getInteractionsByContactNetworkName(
             contactNetwork.name
         ).getNotEndedUserInteractions(currentUser)
@@ -147,7 +173,7 @@ class InteractionServiceImpl(
             updateInteraction(interaction, user)
         }
 
-        interactionRepository.saveAll(interactions)
+        return interactionRepository.saveAll(interactions)
     }
 
     private fun updateInteraction(interaction: Interaction, user: User) {
@@ -184,13 +210,51 @@ class InteractionServiceImpl(
     private fun sendCurrentState(user: User) {
         println("Sent message to ${user.email} with ${user.state}")
         user.messagingToken?.let { token ->
-            val message = Message.builder()
-                .setToken(token.decrypt())
-                .putData("State", user.state.toString())
-                .build()
-            firebaseMessaging.send(message)
+            messagingService.sendMessage(token, STATE, user.state.toString())
         }
     }
+
+    private fun addLocation(read: PostRead, interactions: Set<Interaction>) {
+        if (read.lat != null && read.lon != null) {
+            val locationResponse = locationService.getLocationFromCoordinates(
+                lat = read.lat!!,
+                lon = read.lon!!
+            )
+
+            val countryName = locationResponse.country
+            val regionName = locationResponse.region
+            val provinceName = locationResponse.province
+            val cityName = locationResponse.city
+
+            if (!countryName.isNullOrEmpty() && !regionName.isNullOrEmpty()
+                && !provinceName.isNullOrEmpty() && !cityName.isNullOrEmpty()
+            ) {
+                val country =
+                    countryRepository.findCountryByName(countryName) ?: Country(countryName)
+
+                val region = country.regions.find { region -> region.name == regionName }
+                    ?: Region(regionName).also { region ->
+                        country.regions.add(region)
+                    }
+
+                val province = region.provinces.find { province -> province.name == provinceName }
+                    ?: Province(provinceName).also { province ->
+                        region.provinces.add(province)
+                    }
+
+                val city = province.cities.find { city -> city.name == cityName }
+                    ?: City(cityName).also { city ->
+                        province.cities.add(city)
+                    }
+
+                city.interactions.addAll(interactions)
+                countryRepository.save(country)
+            }
+        }
+    }
+
+    private fun List<AddressComponentsResponse>.findComponent(type: String): String? =
+        find { component -> component.types.contains(type) }?.longName
 
     private fun User.getContactNetworks(): List<ContactNetwork> =
         contactNetworks.map { it.contactNetwork }
@@ -209,4 +273,8 @@ class InteractionServiceImpl(
             .map { userInteraction -> userInteraction.user }
             .toSet()
             .toList()
+
+    companion object {
+        private const val STATE = "State"
+    }
 }

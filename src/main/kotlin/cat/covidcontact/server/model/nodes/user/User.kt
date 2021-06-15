@@ -1,5 +1,6 @@
 package cat.covidcontact.server.model.nodes.user
 
+import cat.covidcontact.server.model.nodes.location.City
 import cat.covidcontact.server.model.nodes.member.Member
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
@@ -13,7 +14,6 @@ data class User(
     var username: String,
     val gender: Gender,
     val birthDate: Long,
-    var city: String? = null,
     var studies: String? = null,
     var occupation: Occupation? = null,
     var marriage: Marriage? = null,
@@ -24,7 +24,10 @@ data class User(
     var messagingToken: String? = null,
 
     @Relationship(type = "MEMBER", direction = Relationship.Direction.OUTGOING)
-    var contactNetworks: MutableList<Member> = mutableListOf()
+    var contactNetworks: MutableList<Member> = mutableListOf(),
+
+    @Relationship(type = "LIVES_IN", direction = Relationship.Direction.OUTGOING)
+    var city: City? = null,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {

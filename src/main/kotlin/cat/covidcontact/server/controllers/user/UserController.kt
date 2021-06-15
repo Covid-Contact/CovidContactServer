@@ -1,5 +1,6 @@
 package cat.covidcontact.server.controllers.user
 
+import cat.covidcontact.server.controllers.runDelete
 import cat.covidcontact.server.controllers.runGet
 import cat.covidcontact.server.controllers.runPost
 import cat.covidcontact.server.controllers.runPut
@@ -50,7 +51,7 @@ class UserController(
                 username,
                 gender,
                 birthDate,
-                city,
+                city?.name,
                 studies,
                 occupation,
                 marriage,
@@ -98,5 +99,19 @@ class UserController(
             positive,
             vaccinated
         )
+    }
+
+    @PutMapping(UserControllerUrls.LOG_OUT)
+    fun logOut(
+        @RequestParam(required = true) email: String,
+        @RequestParam(required = true) deviceId: String
+    ) = runPut {
+        userService.makeLogOut(email, deviceId)
+    }
+
+    @DeleteMapping(UserControllerUrls.DELETE)
+    fun deleteAccount(@RequestParam(required = true) email: String) = runDelete {
+        userService.deleteAccount(email)
+        applicationUserService.deleteAccount(email)
     }
 }

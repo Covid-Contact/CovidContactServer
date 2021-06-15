@@ -10,4 +10,6 @@ object UserControllerUrls {
     const val USER_DEVICE = "/device"
     const val MESSAGE_TOKEN = "/messagetoken"
     const val UPDATE = "/update"
+    const val LOG_OUT = "/logout"
+    const val DELETE = "/delete"
 }
