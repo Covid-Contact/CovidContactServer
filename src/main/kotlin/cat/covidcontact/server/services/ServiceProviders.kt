@@ -6,6 +6,8 @@ import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkReposito
 import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
 import cat.covidcontact.server.model.nodes.location.CountryRepository
+import cat.covidcontact.server.model.nodes.location.ProvinceRepository
+import cat.covidcontact.server.model.nodes.location.RegionRepository
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
@@ -134,8 +136,14 @@ class ServiceProviders {
 
     @Bean
     fun provideStatisticsService(
-        interactionRepository: InteractionRepository
+        interactionRepository: InteractionRepository,
+        countryRepository: CountryRepository,
+        regionRepository: RegionRepository,
+        provinceRepository: ProvinceRepository
     ): StatisticsService = StatisticsServiceImpl(
-        interactionRepository
+        interactionRepository,
+        countryRepository,
+        regionRepository,
+        provinceRepository
     )
 }

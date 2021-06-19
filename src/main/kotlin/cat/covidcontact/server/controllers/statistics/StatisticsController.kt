@@ -15,18 +15,34 @@ class StatisticsController(
     private val statisticsService: StatisticsService
 ) {
 
-    @GetMapping(StatisticsControllerUrls.INTERACTIONS)
-    fun getUserStatistics(
+    @GetMapping(StatisticsControllerUrls.USER_INTERACTIONS)
+    fun getUserInteractionsStatistics(
         @RequestParam(required = false) from: Int? = null,
         @RequestParam(required = false) to: Int? = null,
         @RequestParam(required = false) gender: Gender? = null
     ) = runGet {
         val userStatistics = statisticsService.getUserInteractionsStatistics(from, to, gender)
-        val (ages, interactions) = userStatistics.toList().unzip()
+        val (xAxis, yAxis) = userStatistics.toList().unzip()
 
         PostUserInteractionsStatistics(
-            xAxis = ages,
-            yAxis = interactions
+            xAxis = xAxis,
+            yAxis = yAxis
+        )
+    }
+
+    @GetMapping(StatisticsControllerUrls.LOCATION_INTERACTIONS)
+    fun getLocationInteractionsStatistics(
+        @RequestParam(required = false) country: String? = null,
+        @RequestParam(required = false) region: String? = null,
+        @RequestParam(required = false) province: String? = null
+    ) = runGet {
+        val userStatistics =
+            statisticsService.getLocationInteractionsStatistics(country, region, province)
+        val (xAxis, yAxis) = userStatistics.toList().unzip()
+
+        PostUserInteractionsStatistics(
+            xAxis = xAxis,
+            yAxis = yAxis
         )
     }
 }

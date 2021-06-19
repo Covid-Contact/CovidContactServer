@@ -5,8 +5,8 @@ import java.io.Serializable
 
 data class PostUserInteractionsStatistics(
     @JsonProperty("xAxis")
-    var xAxis: List<Int>,
+    var xAxis: List<Any>,
 
     @JsonProperty("yAxis")
-    var yAxis: List<Int>
+    var yAxis: List<Any>
 ) : Serializable

@@ -39,7 +39,8 @@ class WebSecurity(
                 HttpMethod.GET,
                 UserControllerUrls.BASE + UserControllerUrls.VALIDATE,
                 UserControllerUrls.BASE + UserControllerUrls.VALIDATED,
-                StatisticsControllerUrls.BASE + StatisticsControllerUrls.INTERACTIONS
+                StatisticsControllerUrls.BASE + StatisticsControllerUrls.USER_INTERACTIONS,
+                StatisticsControllerUrls.BASE + StatisticsControllerUrls.LOCATION_INTERACTIONS
             )
             .permitAll()
             .anyRequest().authenticated()
