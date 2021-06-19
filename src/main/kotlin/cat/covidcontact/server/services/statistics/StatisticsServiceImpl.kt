@@ -11,20 +11,20 @@ class StatisticsServiceImpl(
     @Synchronized
     override fun getUserInteractionsStatistics(from: Int?, to: Int?): Map<Int, Int> {
         val currentMillis = System.currentTimeMillis()
-        val fromMillis = getYearIntervalMillis(currentMillis, from)
-        val toMillis = getYearIntervalMillis(currentMillis, to)
 
-        val interactions = interactionRepository.findAll().toList()
-        val filtered = interactions.filterByBirthdate(fromMillis) { birthDate, yearsMillis ->
-            birthDate >= yearsMillis
-        }.filterByBirthdate(toMillis) { birthDate, yearsMillis ->
-            birthDate <= yearsMillis
+        val interactions = interactionRepository.findAll()
+        println("Interactions: $interactions")
+
+        val filtered = interactions.filterByAge(currentMillis, from) { age, years ->
+            age >= years
+        }.filterByAge(currentMillis, to) { age, years ->
+            age <= years
         }
 
         val users = filtered.getAllUsers()
         return users.groupBy { user ->
-            user.birthDate.toYears()
-        }.toMutableMap().mapValues { (_, users) -> users.size }
+            (currentMillis - user.birthDate).toYears()
+        }.toMutableMap().mapValues { (_, userList) -> userList.size }
     }
 
     private fun getYearIntervalMillis(current: Long, years: Int?) =
@@ -32,12 +32,13 @@ class StatisticsServiceImpl(
             current - valueMillis
         }
 
-    private fun List<Interaction>.filterByBirthdate(
-        yearsMillis: Long?,
-        onBirthDate: (Long, Long) -> Boolean
+    private fun List<Interaction>.filterByAge(
+        currentMillis: Long,
+        years: Int?,
+        onAge: (Int, Int) -> Boolean
     ) = filter { interaction ->
-        yearsMillis == null || interaction.userInteractions.any { userInteraction ->
-            onBirthDate(userInteraction.user.birthDate, yearsMillis)
+        years == null || interaction.userInteractions.any { userInteraction ->
+            onAge((currentMillis - userInteraction.user.birthDate).toYears(), years)
         }
     }
 

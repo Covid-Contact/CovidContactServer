@@ -1,0 +1,16 @@
+GET http://localhost:8080/statistics/user/interactions
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=18
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=50
+
+###
+GET http://localhost:8080/statistics/user/interactions?to=50
+
+###
+GET http://localhost:8080/statistics/user/interactions?to=18
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=18&to=30
