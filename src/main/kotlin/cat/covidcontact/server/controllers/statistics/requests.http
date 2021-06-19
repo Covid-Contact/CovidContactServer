@@ -14,3 +14,6 @@ GET http://localhost:8080/statistics/user/interactions?to=18
 
 ###
 GET http://localhost:8080/statistics/user/interactions?from=18&to=30
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=18&to=30&gender=Male

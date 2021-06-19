@@ -1,6 +1,7 @@
 package cat.covidcontact.server.controllers.statistics
 
 import cat.covidcontact.server.controllers.runGet
+import cat.covidcontact.server.model.nodes.user.Gender
 import cat.covidcontact.server.model.post.PostUserInteractionsStatistics
 import cat.covidcontact.server.services.statistics.StatisticsService
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,9 +18,10 @@ class StatisticsController(
     @GetMapping(StatisticsControllerUrls.INTERACTIONS)
     fun getUserStatistics(
         @RequestParam(required = false) from: Int? = null,
-        @RequestParam(required = false) to: Int? = null
+        @RequestParam(required = false) to: Int? = null,
+        @RequestParam(required = false) gender: Gender? = null
     ) = runGet {
-        val userStatistics = statisticsService.getUserInteractionsStatistics(from, to)
+        val userStatistics = statisticsService.getUserInteractionsStatistics(from, to, gender)
         val (ages, interactions) = userStatistics.toList().unzip()
 
         PostUserInteractionsStatistics(

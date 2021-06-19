@@ -2,6 +2,7 @@ package cat.covidcontact.server.services.statistics
 
 import cat.covidcontact.server.model.nodes.interaction.Interaction
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
+import cat.covidcontact.server.model.nodes.user.Gender
 import cat.covidcontact.server.model.nodes.user.User
 
 class StatisticsServiceImpl(
@@ -9,7 +10,11 @@ class StatisticsServiceImpl(
 ) : StatisticsService {
 
     @Synchronized
-    override fun getUserInteractionsStatistics(from: Int?, to: Int?): Map<Int, Int> {
+    override fun getUserInteractionsStatistics(
+        from: Int?,
+        to: Int?,
+        gender: Gender?
+    ): Map<Int, Int> {
         val currentMillis = System.currentTimeMillis()
 
         val interactions = interactionRepository.findAll()
@@ -21,16 +26,14 @@ class StatisticsServiceImpl(
             age <= years
         }
 
-        val users = filtered.getAllUsers()
+        val users = filtered.getAllUsers().filter { user ->
+            gender == null || user.gender == gender
+        }
+
         return users.groupBy { user ->
             (currentMillis - user.birthDate).toYears()
         }.toMutableMap().mapValues { (_, userList) -> userList.size }
     }
-
-    private fun getYearIntervalMillis(current: Long, years: Int?) =
-        years?.times(DAYS)?.times(HOURS)?.times(SECONDS)?.times(MILLIS)?.let { valueMillis ->
-            current - valueMillis
-        }
 
     private fun List<Interaction>.filterByAge(
         currentMillis: Long,
