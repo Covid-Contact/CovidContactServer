@@ -21,6 +21,8 @@ import cat.covidcontact.server.services.location.LocationService
 import cat.covidcontact.server.services.location.LocationServiceImpl
 import cat.covidcontact.server.services.messaging.MessagingService
 import cat.covidcontact.server.services.messaging.MessagingServiceImpl
+import cat.covidcontact.server.services.statistics.StatisticsService
+import cat.covidcontact.server.services.statistics.StatisticsServiceImpl
 import cat.covidcontact.server.services.user.NumberCalculatorService
 import cat.covidcontact.server.services.user.NumberCalculatorServiceImpl
 import cat.covidcontact.server.services.user.UserService
@@ -128,5 +130,12 @@ class ServiceProviders {
         firebaseMessaging: FirebaseMessaging
     ): MessagingService = MessagingServiceImpl(
         firebaseMessaging
+    )
+
+    @Bean
+    fun provideStatisticsService(
+        interactionRepository: InteractionRepository
+    ): StatisticsService = StatisticsServiceImpl(
+        interactionRepository
     )
 }
