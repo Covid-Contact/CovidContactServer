@@ -25,8 +25,8 @@ class StatisticsController(
         val (xAxis, yAxis) = userStatistics.toList().unzip()
 
         PostUserInteractionsStatistics(
-            xAxis = xAxis,
-            yAxis = yAxis
+            xAxes = xAxis,
+            yAxes = yAxis
         )
     }
 
@@ -41,8 +41,8 @@ class StatisticsController(
         val (xAxis, yAxis) = userStatistics.toList().unzip()
 
         PostUserInteractionsStatistics(
-            xAxis = xAxis,
-            yAxis = yAxis
+            xAxes = xAxis,
+            yAxes = yAxis
         )
     }
 }

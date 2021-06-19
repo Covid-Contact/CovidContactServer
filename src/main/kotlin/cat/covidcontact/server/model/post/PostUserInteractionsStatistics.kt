@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable
 
 data class PostUserInteractionsStatistics(
-    @JsonProperty("xAxis")
-    var xAxis: List<Any>,
+    @JsonProperty("xAxes")
+    var xAxes: List<Any>,
 
-    @JsonProperty("yAxis")
-    var yAxis: List<Any>
+    @JsonProperty("yAxes")
+    var yAxes: List<Any>
 ) : Serializable
