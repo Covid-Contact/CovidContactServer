@@ -3,7 +3,6 @@ package cat.covidcontact.server.controllers.contactnetwork
 import cat.covidcontact.server.controllers.*
 import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetwork
 import cat.covidcontact.server.model.post.PostContactNetwork
-import cat.covidcontact.server.services.applicationuser.ApplicationUserService
 import cat.covidcontact.server.services.contactnetwork.ContactNetworkService
 import cat.covidcontact.server.services.user.UserService
 import org.springframework.http.HttpStatus
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*
 class ContactNetworkController(
     private val userService: UserService,
     private val contactNetworkService: ContactNetworkService,
-    private val applicationUserService: ApplicationUserService
 ) {
 
     @PostMapping(ContactNetworkControllerUrls.CREATE_CONTACT_NETWORK)
