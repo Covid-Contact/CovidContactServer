@@ -22,7 +22,7 @@ GET http://localhost:8080/statistics/user/interactions?from=18&to=30&gender=Male
 GET http://localhost:8080/statistics/location/interactions?country=España
 
 ###
-GET http://localhost:8080/statistics/location/interactions?region=Catalonia
+GET http://localhost:8080/statistics/location/interactions?region=Catalunya
 
 ###
 GET http://localhost:8080/statistics/location/interactions?province=Barcelona
