@@ -1,4 +1,4 @@
-package cat.covidcontact.server.services.interaction.geocoding
+package cat.covidcontact.server.services.location.geocoding
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

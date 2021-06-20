@@ -45,7 +45,7 @@ class StatisticsServiceImpl(
         province: String?,
     ): Map<String, Int> {
         val interactions = interactionRepository.findAll().filter { interaction ->
-            interaction.city != null && interaction.endDateTime != null
+            interaction.cities != null
         }
         return when {
             country != null -> getInteractionsFromCountry(interactions, country)
@@ -90,10 +90,21 @@ class StatisticsServiceImpl(
     private fun getLocationInteractionStatistics(
         interactions: List<Interaction>,
         cities: List<String>
-    ) = interactions.filter { interaction ->
-        cities.contains(interaction.city?.name)
-    }.groupBy { interaction -> interaction.city!!.name }
-        .mapValues { (_, interactions) -> interactions.size }
+    ): Map<String, Int> {
+        val interactionCities = interactions.flatMap { interaction ->
+            interaction.cities!!
+        }.toSet().map { city -> city.name }
+
+        val citiesWithInteractions = cities intersect interactionCities
+        return citiesWithInteractions.sorted().associateWith { cityName ->
+            interactions.getAmountAtCity(cityName)
+        }
+    }
+
+    private fun List<Interaction>.getAmountAtCity(cityName: String): Int =
+        filter { interaction ->
+            interaction.cities?.find { city -> city.name == cityName } != null
+        }.size
 
     private fun List<Interaction>.filterByAge(
         currentMillis: Long,

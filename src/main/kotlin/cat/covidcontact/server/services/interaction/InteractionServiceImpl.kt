@@ -14,7 +14,6 @@ import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.nodes.user.UserState
 import cat.covidcontact.server.model.post.PostRead
-import cat.covidcontact.server.services.interaction.geocoding.AddressComponentsResponse
 import cat.covidcontact.server.services.location.LocationService
 import cat.covidcontact.server.services.messaging.MessagingService
 import kotlin.math.max
@@ -40,6 +39,9 @@ class InteractionServiceImpl(
         } else {
             registerInteractionsToContactNetworks(read, currentUserContactNetworks, currentUser)
         }
+
+        println(read.lat)
+        println(read.lon)
 
         if (read.lat != null && read.lon != null) {
             addLocation(read, interactions)
@@ -247,14 +249,12 @@ class InteractionServiceImpl(
                         province.cities.add(city)
                     }
 
-                interactions.forEach { interaction -> interaction.city = city }
+                interactions.forEach { interaction -> interaction.cities?.add(city) }
+                interactionRepository.saveAll(interactions)
                 countryRepository.save(country)
             }
         }
     }
-
-    private fun List<AddressComponentsResponse>.findComponent(type: String): String? =
-        find { component -> component.types.contains(type) }?.longName
 
     private fun User.getContactNetworks(): List<ContactNetwork> =
         contactNetworks.map { it.contactNetwork }
