@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(StatisticsControllerUrls.BASE)
 class StatisticsController(
-    private val statisticsService: StatisticsService,
+    private val statisticsService: StatisticsService
 ) {
 
     @GetMapping(StatisticsControllerUrls.USER_INTERACTIONS)

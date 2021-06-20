@@ -91,6 +91,6 @@ class LocationServiceImpl : LocationService {
                 )
         }
 
-        return result
+        return result.replace("'", "")
     }
 }

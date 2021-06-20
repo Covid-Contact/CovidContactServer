@@ -7,6 +7,7 @@ import cat.covidcontact.server.model.nodes.location.ProvinceRepository
 import cat.covidcontact.server.model.nodes.location.RegionRepository
 import cat.covidcontact.server.model.nodes.user.Gender
 import cat.covidcontact.server.model.nodes.user.User
+import java.util.*
 
 class StatisticsServiceImpl(
     private val interactionRepository: InteractionRepository,
@@ -20,7 +21,7 @@ class StatisticsServiceImpl(
         from: Int?,
         to: Int?,
         gender: Gender?
-    ): Map<Int, Int> {
+    ): SortedMap<Int, Int> {
         val currentMillis = System.currentTimeMillis()
         val interactions = interactionRepository.findAll()
         val filtered = interactions.filterByAge(currentMillis, from) { age, years ->
@@ -35,7 +36,7 @@ class StatisticsServiceImpl(
 
         return users.groupBy { user ->
             (currentMillis - user.birthDate).toYears()
-        }.toMutableMap().mapValues { (_, userList) -> userList.size }
+        }.toMutableMap().mapValues { (_, userList) -> userList.size }.toSortedMap()
     }
 
     @Synchronized
@@ -43,7 +44,7 @@ class StatisticsServiceImpl(
         country: String?,
         region: String?,
         province: String?,
-    ): Map<String, Int> {
+    ): SortedMap<String, Int> {
         val interactions = interactionRepository.findAll().filter { interaction ->
             interaction.cities != null
         }
@@ -52,7 +53,7 @@ class StatisticsServiceImpl(
             region != null -> getInteractionsFromRegion(interactions, region)
             province != null -> getInteractionsFromProvince(interactions, province)
             else -> emptyMap()
-        }
+        }.toSortedMap()
     }
 
     private fun getInteractionsFromCountry(
