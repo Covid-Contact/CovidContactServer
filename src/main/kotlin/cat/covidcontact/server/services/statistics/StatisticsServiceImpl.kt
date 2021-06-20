@@ -2,6 +2,7 @@ package cat.covidcontact.server.services.statistics
 
 import cat.covidcontact.server.model.nodes.interaction.Interaction
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
+import cat.covidcontact.server.model.nodes.interaction.UserInteraction
 import cat.covidcontact.server.model.nodes.location.CountryRepository
 import cat.covidcontact.server.model.nodes.location.ProvinceRepository
 import cat.covidcontact.server.model.nodes.location.RegionRepository
@@ -24,19 +25,17 @@ class StatisticsServiceImpl(
     ): SortedMap<Int, Int> {
         val currentMillis = System.currentTimeMillis()
         val interactions = interactionRepository.findAll()
-        val filtered = interactions.filterByAge(currentMillis, from) { age, years ->
-            age >= years
-        }.filterByAge(currentMillis, to) { age, years ->
-            age <= years
-        }
 
-        val users = filtered.getAllUsers().filter { user ->
-            gender == null || user.gender == gender
-        }
+        val ages = interactions.flatMap { interaction -> interaction.userInteractions }
+            .map { userInteraction -> userInteraction.calculateAge(currentMillis) }
+            .toSet()
 
-        return users.groupBy { user ->
-            (currentMillis - user.birthDate).toYears()
-        }.toMutableMap().mapValues { (_, userList) -> userList.size }.toSortedMap()
+        val filteredAges = ages.filter { age -> from == null || age >= from }
+            .filter { age -> to == null || age <= to }
+
+        return filteredAges.associateWith { age ->
+            interactions.getAmountWithAge(age, gender, currentMillis)
+        }.toSortedMap()
     }
 
     @Synchronized
@@ -101,6 +100,21 @@ class StatisticsServiceImpl(
             interactions.getAmountAtCity(cityName)
         }
     }
+
+    private fun UserInteraction.calculateAge(currentMillis: Long): Int =
+        (currentMillis - user.birthDate).toYears()
+
+    private fun List<Interaction>.getAmountWithAge(
+        age: Int,
+        gender: Gender?,
+        currentMillis: Long
+    ): Int =
+        filter { interaction ->
+            interaction.userInteractions.find { userInteraction ->
+                (gender == null || userInteraction.user.gender == gender) &&
+                    userInteraction.calculateAge(currentMillis) == age
+            } != null
+        }.size
 
     private fun List<Interaction>.getAmountAtCity(cityName: String): Int =
         filter { interaction ->
