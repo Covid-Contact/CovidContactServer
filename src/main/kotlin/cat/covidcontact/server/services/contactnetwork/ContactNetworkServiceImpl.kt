@@ -10,7 +10,7 @@ import cat.covidcontact.server.model.nodes.member.Member
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostContactNetwork
-import cat.covidcontact.server.services.user.NumberCalculatorService
+import cat.covidcontact.server.services.numbercalculator.NumberCalculatorService
 import org.springframework.stereotype.Service
 
 @Service

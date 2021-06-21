@@ -6,10 +6,12 @@ import cat.covidcontact.server.services.location.nominatim.NominatimSearchResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.stereotype.Service
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 
+@Service
 class LocationServiceImpl : LocationService {
     private val restTemplate = RestTemplateBuilder().build()
 

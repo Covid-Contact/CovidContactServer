@@ -5,8 +5,10 @@ import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
 import cat.covidcontact.server.model.nodes.interaction.UserInteraction
 import cat.covidcontact.server.model.nodes.location.*
 import cat.covidcontact.server.model.nodes.user.Gender
+import org.springframework.stereotype.Service
 import java.util.*
 
+@Service
 class StatisticsServiceImpl(
     private val interactionRepository: InteractionRepository,
     private val countryRepository: CountryRepository,

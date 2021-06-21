@@ -35,6 +35,26 @@ class DeviceServiceImplTest {
         setUpDefaultData()
     }
 
+    @Test
+    fun `when registering user device then it makes log out of other and log in into current`() {
+        every { deviceRepository.findAll() } returns devices
+        every { deviceRepository.save(any()) } returns devices.first()
+        every { deviceRepository.findDeviceById(any()) } returns devices.last()
+
+        deviceServiceImpl.registerUserDevice(user, postDevice)
+        assertThat(devices.first().users.first().isLogged, isEqualTo(false))
+        assertThat(devices.last().users.first().isLogged, isEqualTo(true))
+
+        verify {
+            deviceRepository.findAll()
+            deviceRepository.findDeviceById(any())
+        }
+
+        verify(exactly = devices.size + 1) {
+            deviceRepository.save(any())
+        }
+    }
+
     private fun setUpDefaultData() {
         user = User(
             email = email,
@@ -62,25 +82,5 @@ class DeviceServiceImplTest {
             id = devices.last().id,
             name = devices.last().name
         )
-    }
-
-    @Test
-    fun `when registering user device then it makes log out of other and log in into current`() {
-        every { deviceRepository.findAll() } returns devices
-        every { deviceRepository.save(any()) } returns devices.first()
-        every { deviceRepository.findDeviceById(any()) } returns devices.last()
-
-        deviceServiceImpl.registerUserDevice(user, postDevice)
-        assertThat(devices.first().users.first().isLogged, isEqualTo(false))
-        assertThat(devices.last().users.first().isLogged, isEqualTo(true))
-
-        verify {
-            deviceRepository.findAll()
-            deviceRepository.findDeviceById(any())
-        }
-
-        verify(exactly = devices.size + 1) {
-            deviceRepository.save(any())
-        }
     }
 }

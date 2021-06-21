@@ -1,45 +1,13 @@
 package cat.covidcontact.server.services
 
-import cat.covidcontact.server.model.authentication.applicationuser.ApplicationUserRepository
-import cat.covidcontact.server.model.authentication.verification.VerificationRepository
-import cat.covidcontact.server.model.nodes.contactnetwork.ContactNetworkRepository
-import cat.covidcontact.server.model.nodes.device.DeviceRepository
-import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
-import cat.covidcontact.server.model.nodes.location.CountryRepository
-import cat.covidcontact.server.model.nodes.location.ProvinceRepository
-import cat.covidcontact.server.model.nodes.location.RegionRepository
-import cat.covidcontact.server.model.nodes.user.UserRepository
-import cat.covidcontact.server.services.applicationuser.ApplicationUserService
-import cat.covidcontact.server.services.applicationuser.ApplicationUserServiceImpl
-import cat.covidcontact.server.services.contactnetwork.ContactNetworkService
-import cat.covidcontact.server.services.contactnetwork.ContactNetworkServiceImpl
-import cat.covidcontact.server.services.device.DeviceService
-import cat.covidcontact.server.services.device.DeviceServiceImpl
-import cat.covidcontact.server.services.email.EmailService
-import cat.covidcontact.server.services.email.EmailServiceImpl
-import cat.covidcontact.server.services.interaction.InteractionService
-import cat.covidcontact.server.services.interaction.InteractionServiceImpl
-import cat.covidcontact.server.services.location.LocationService
-import cat.covidcontact.server.services.location.LocationServiceImpl
-import cat.covidcontact.server.services.messaging.MessagingService
-import cat.covidcontact.server.services.messaging.MessagingServiceImpl
-import cat.covidcontact.server.services.statistics.StatisticsService
-import cat.covidcontact.server.services.statistics.StatisticsServiceImpl
-import cat.covidcontact.server.services.user.NumberCalculatorService
-import cat.covidcontact.server.services.user.NumberCalculatorServiceImpl
-import cat.covidcontact.server.services.user.UserService
-import cat.covidcontact.server.services.user.UserServiceImpl
-import com.google.firebase.messaging.FirebaseMessaging
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSenderImpl
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Configuration
 class ServiceProviders {
 
-    @Bean
+    /*@Bean
     fun provideApplicationUserService(
         emailService: EmailService,
         applicationUserRepository: ApplicationUserRepository,
@@ -73,7 +41,7 @@ class ServiceProviders {
     @Bean
     fun provideEmailService(
         @Qualifier("provideJavaMailService") javaMailSenderImpl: JavaMailSenderImpl
-    ): EmailService = EmailServiceImpl(javaMailSenderImpl)
+    ): EmailService = EmailServiceImpl(javaMailSenderImpl)*/
 
     @Bean
     fun provideJavaMailService(): JavaMailSenderImpl = JavaMailSenderImpl().apply {
@@ -89,7 +57,7 @@ class ServiceProviders {
         }
     }
 
-    @Bean
+    /*@Bean
     fun provideDeviceService(
         deviceRepository: DeviceRepository
     ): DeviceService = DeviceServiceImpl(deviceRepository)
@@ -145,5 +113,5 @@ class ServiceProviders {
         countryRepository,
         regionRepository,
         provinceRepository
-    )
+    )*/
 }

@@ -15,6 +15,7 @@ class InteractionController(
     @PostMapping(InteractionControllerUrls.READ)
     fun addRead(@RequestBody read: PostRead) = runPost {
         interactionService.addRead(read)
+        Unit
     }
 
     @PutMapping(InteractionControllerUrls.POSITIVE)

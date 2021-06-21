@@ -1,4 +1,4 @@
-package cat.covidcontact.server.services.user
+package cat.covidcontact.server.services.numbercalculator
 
 interface NumberCalculatorService {
     fun generateRandomNumber(): Int

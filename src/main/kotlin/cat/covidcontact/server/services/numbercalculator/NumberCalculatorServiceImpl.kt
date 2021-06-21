@@ -1,7 +1,9 @@
-package cat.covidcontact.server.services.user
+package cat.covidcontact.server.services.numbercalculator
 
+import org.springframework.stereotype.Service
 import kotlin.random.Random
 
+@Service
 class NumberCalculatorServiceImpl : NumberCalculatorService {
     private val minNumber = 1000
     private val maxNumber = 9999

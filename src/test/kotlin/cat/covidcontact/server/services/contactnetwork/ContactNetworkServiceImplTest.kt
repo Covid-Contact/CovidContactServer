@@ -9,7 +9,7 @@ import cat.covidcontact.server.model.nodes.member.Member
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostContactNetwork
-import cat.covidcontact.server.services.user.NumberCalculatorService
+import cat.covidcontact.server.services.numbercalculator.NumberCalculatorService
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -58,32 +58,6 @@ class ContactNetworkServiceImplTest {
         )
 
         setUpDefaultData()
-    }
-
-    private fun setUpDefaultData() {
-        postContactNetwork = PostContactNetwork(
-            name = contactNetworkPostName,
-            password = "1234",
-            ownerEmail = email,
-            ownerUsername = username,
-            isVisible = true,
-            isPasswordProtected = true,
-            accessCode = "123456",
-            state = ContactNetworkState.Normal.toString()
-        )
-
-        user = User(
-            email = email,
-            username = username
-        )
-
-        contactNetwork = ContactNetwork(
-            name = contactNetworkName
-        )
-
-        otherContactNetwork = ContactNetwork(
-            name = "${contactNetworkPostName}2#1234"
-        )
     }
 
     @Test
@@ -622,5 +596,31 @@ class ContactNetworkServiceImplTest {
             userRepository.findByEmail(any())
             userRepository.removeMember(any(), any())
         }
+    }
+
+    private fun setUpDefaultData() {
+        postContactNetwork = PostContactNetwork(
+            name = contactNetworkPostName,
+            password = "1234",
+            ownerEmail = email,
+            ownerUsername = username,
+            isVisible = true,
+            isPasswordProtected = true,
+            accessCode = "123456",
+            state = ContactNetworkState.Normal.toString()
+        )
+
+        user = User(
+            email = email,
+            username = username
+        )
+
+        contactNetwork = ContactNetwork(
+            name = contactNetworkName
+        )
+
+        otherContactNetwork = ContactNetwork(
+            name = "${contactNetworkPostName}2#1234"
+        )
     }
 }

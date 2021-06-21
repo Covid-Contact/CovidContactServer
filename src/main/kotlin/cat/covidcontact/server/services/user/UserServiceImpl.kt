@@ -10,7 +10,10 @@ import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostUser
 import cat.covidcontact.server.security.encrypt
 import cat.covidcontact.server.services.location.LocationService
+import cat.covidcontact.server.services.numbercalculator.NumberCalculatorService
+import org.springframework.stereotype.Service
 
+@Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val deviceRepository: DeviceRepository,
