@@ -22,6 +22,7 @@ import cat.covidcontact.server.services.messaging.MessagingService
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.verify
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -94,14 +95,26 @@ class InteractionServiceImplTest {
         )
 
         users = listOf(
-            User(email = "user1@gmail.com", username = "user1#1234").also { user ->
+            User(
+                email = "user1@gmail.com",
+                username = "user1#1234",
+                messagingToken = "1"
+            ).also { user ->
                 user.contactNetworks.add(Member(contactNetwork = contactNetworks[0]))
                 user.contactNetworks.add(Member(contactNetwork = contactNetworks[1]))
             },
-            User(email = "user2@gmail.com", username = "user2#1234").also { user ->
+            User(
+                email = "user2@gmail.com",
+                username = "user2#1234",
+                messagingToken = "2"
+            ).also { user ->
                 user.contactNetworks.add(Member(contactNetwork = contactNetworks[0]))
             },
-            User(email = "user3@gmail.com", username = "user3#1234").also { user ->
+            User(
+                email = "user3@gmail.com",
+                username = "user3#1234",
+                messagingToken = "3"
+            ).also { user ->
                 user.contactNetworks.add(Member(contactNetwork = contactNetworks[0]))
             }
         )
@@ -367,5 +380,41 @@ class InteractionServiceImplTest {
             isEqualTo(true)
         )
         assertThat(interactionsList.first().endDateTime, isEqualTo(null))
+    }
+
+    @Test
+    fun `when notifying positive user does not exist then exception is thrown`() {
+        every { userRepository.findByEmail(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            interactionServiceImpl.notifyPositive(users.first().email)
+        }
+    }
+
+    @Test
+    fun `when notifying positive users the close contacts are notified`() {
+        every { userRepository.findByEmail(any()) } returns users.first()
+        every { userRepository.getAllMembersFromContactNetwork(any()) } returns users
+        every { userRepository.saveAll(any<List<User>>()) } returns users
+        every {
+            interactionRepository.getInteractionsByContactNetworkName(any())
+        } returns listOf(
+            Interaction(
+                startDateTime = 1,
+                userInteractions = mutableListOf(
+                    UserInteraction(user = users[0]),
+                    UserInteraction(user = users[1]),
+                    UserInteraction(user = users[2])
+                )
+            )
+        )
+        every { contactNetworkRepository.save(any()) } returns contactNetworks.first()
+        every { messagingService.sendMessage(any(), any(), any()) } returns Unit
+
+        interactionServiceImpl.notifyPositive(users.first().email)
+
+        verify(exactly = users.size) {
+            messagingService.sendMessage(any(), any(), any())
+        }
     }
 }

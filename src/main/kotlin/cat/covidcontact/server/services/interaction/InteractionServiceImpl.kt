@@ -72,11 +72,11 @@ class InteractionServiceImpl(
                     contactNetworkRepository.save(contactNetwork)
                 }
 
-                val nearContacts = interactions.getAllUsers()
+                val closeContacts = interactions.getAllUsers()
                 val users = userRepository.getAllMembersFromContactNetwork(contactNetwork.name)
                     .onEach { user ->
                         user.state = when (user) {
-                            in nearContacts -> UserState.Quarantine
+                            in closeContacts -> UserState.Quarantine
                             else -> UserState.Prevention
                         }
 
