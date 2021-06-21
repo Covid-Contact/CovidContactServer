@@ -37,13 +37,12 @@ class ContactNetworkServiceImplTest {
     private val email = "albert@gmail.com"
     private val username = "Albert#1234"
     private val accessCode = "1234"
+    private val newPassword = "5678"
+    private val otherUserEmail = "other@gmail.com"
 
     private lateinit var postContactNetwork: PostContactNetwork
-
     private lateinit var user: User
-
     private lateinit var contactNetwork: ContactNetwork
-
     private lateinit var otherContactNetwork: ContactNetwork
 
     @BeforeEach
@@ -349,6 +348,279 @@ class ContactNetworkServiceImplTest {
             contactNetworkRepository.findContactNetworkByName(any())
             userRepository.removeMember(any(), any())
             contactNetworkRepository.save(any())
+        }
+    }
+
+    @Test
+    fun `when deleting network if it is does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.deleteContactNetwork(contactNetworkName, email)
+        }
+    }
+
+    @Test
+    fun `when deleting network user does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.deleteContactNetwork(contactNetworkName, email)
+        }
+    }
+
+    @Test
+    fun `when deleting network user is not owner then exception is thrown`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = false))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.deleteContactNetwork(contactNetworkName, email)
+        }
+    }
+
+    @Test
+    fun `when deleting network then state is updated`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+        every { contactNetworkRepository.setStateToDeleted(any()) } returns Unit
+
+        contactNetworkServiceImpl.deleteContactNetwork(contactNetworkName, email)
+        assertThat(contactNetwork.state, isEqualTo(ContactNetworkState.Deleted))
+
+        verify {
+            contactNetworkRepository.findContactNetworkByName(any())
+            userRepository.findByEmail(any())
+            contactNetworkRepository.setStateToDeleted(any())
+        }
+    }
+
+    @Test
+    fun `when updating network visibility if it is does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updateVisibility(contactNetworkName, email, false)
+        }
+    }
+
+    @Test
+    fun `when updating network visibility user does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updateVisibility(contactNetworkName, email, false)
+        }
+    }
+
+    @Test
+    fun `when updating network visibility user is not owner then exception is thrown`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = false))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updateVisibility(contactNetworkName, email, false)
+        }
+    }
+
+    @Test
+    fun `when updating network visibility then it is updated`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+        every { contactNetworkRepository.save(any()) } returns contactNetwork
+
+        contactNetworkServiceImpl.updateVisibility(contactNetworkName, email, false)
+        assertThat(contactNetwork.isVisible, isEqualTo(false))
+
+        verify {
+            contactNetworkRepository.findContactNetworkByName(any())
+            userRepository.findByEmail(any())
+            contactNetworkRepository.save(any())
+        }
+    }
+
+    @Test
+    fun `when updating network password if it is does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updatePassword(contactNetworkName, newPassword, email)
+        }
+    }
+
+    @Test
+    fun `when updating network password user does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updatePassword(contactNetworkName, newPassword, email)
+        }
+    }
+
+    @Test
+    fun `when updating network password user is not owner then exception is thrown`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = false))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updatePassword(contactNetworkName, newPassword, email)
+        }
+    }
+
+    @Test
+    fun `when updating network password then it is updated`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+        every { contactNetworkRepository.save(any()) } returns contactNetwork
+
+        contactNetworkServiceImpl.updatePassword(contactNetworkName, newPassword, email)
+        assertThat(contactNetwork.password, isEqualTo(newPassword))
+
+        verify {
+            contactNetworkRepository.findContactNetworkByName(any())
+            userRepository.findByEmail(any())
+            contactNetworkRepository.save(any())
+        }
+    }
+
+    @Test
+    fun `when updating password protection if it is does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updateIsPasswordProtected(contactNetworkName, false, email)
+        }
+    }
+
+    @Test
+    fun `when updating password protection user does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updateIsPasswordProtected(contactNetworkName, false, email)
+        }
+    }
+
+    @Test
+    fun `when updating password protection user is not owner then exception is thrown`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = false))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.updateIsPasswordProtected(contactNetworkName, false, email)
+        }
+    }
+
+    @Test
+    fun `when updating password protection then it is updated`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+        every { contactNetworkRepository.save(any()) } returns contactNetwork
+
+        contactNetworkServiceImpl.updateIsPasswordProtected(contactNetworkName, false, email)
+        assertThat(contactNetwork.isPasswordProtected, isEqualTo(false))
+
+        verify {
+            contactNetworkRepository.findContactNetworkByName(any())
+            userRepository.findByEmail(any())
+            contactNetworkRepository.save(any())
+        }
+    }
+
+    @Test
+    fun `when getting contact network if not member and user is member then list is empty`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
+        every { userRepository.getAllMembersFromContactNetwork(any()) } returns listOf(user)
+
+        val contactNetworks = contactNetworkServiceImpl.getContactNetworkIfNotMember(
+            contactNetworkName,
+            email
+        )
+
+        assertThat(contactNetworks.size, isEqualTo(0))
+    }
+
+    @Test
+    fun `when getting contact network if not member and it does not exist then list is empty`() {
+        every { userRepository.getAllMembersFromContactNetwork(any()) } returns emptyList()
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns null
+
+        val contactNetworks = contactNetworkServiceImpl.getContactNetworkIfNotMember(
+            contactNetworkName,
+            email
+        )
+
+        assertThat(contactNetworks.size, isEqualTo(0))
+    }
+
+    @Test
+    fun `when getting contact network if not member then list contains it`() {
+        every { userRepository.getAllMembersFromContactNetwork(any()) } returns emptyList()
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+
+        val contactNetworks = contactNetworkServiceImpl.getContactNetworkIfNotMember(
+            contactNetworkName,
+            email
+        )
+
+        assertThat(contactNetworks.size, isEqualTo(1))
+    }
+
+    @Test
+    fun `when deleting member if it is does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.deleteMember(contactNetworkName, otherUserEmail, email)
+        }
+    }
+
+    @Test
+    fun `when deleting member user does not exist then exception is thrown`() {
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns null
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.deleteMember(contactNetworkName, otherUserEmail, email)
+        }
+    }
+
+    @Test
+    fun `when deleting member user is not owner then exception is thrown`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = false))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+
+        assertThrows<CovidContactException> {
+            contactNetworkServiceImpl.deleteMember(contactNetworkName, otherUserEmail, email)
+        }
+    }
+
+    @Test
+    fun `when deleting member then member is deleted`() {
+        user.contactNetworks.add(Member(contactNetwork = contactNetwork, isOwner = true))
+        every { contactNetworkRepository.findContactNetworkByName(any()) } returns contactNetwork
+        every { userRepository.findByEmail(any()) } returns user
+        every { userRepository.removeMember(any(), any()) } returns Unit
+
+        contactNetworkServiceImpl.deleteMember(contactNetworkName, otherUserEmail, email)
+
+        verify {
+            contactNetworkRepository.findContactNetworkByName(any())
+            userRepository.findByEmail(any())
+            userRepository.removeMember(any(), any())
         }
     }
 }
