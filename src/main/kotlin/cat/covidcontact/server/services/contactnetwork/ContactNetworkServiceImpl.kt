@@ -11,7 +11,9 @@ import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostContactNetwork
 import cat.covidcontact.server.services.user.NumberCalculatorService
+import org.springframework.stereotype.Service
 
+@Service
 class ContactNetworkServiceImpl(
     private val contactNetworkRepository: ContactNetworkRepository,
     private val userRepository: UserRepository,
@@ -39,40 +41,39 @@ class ContactNetworkServiceImpl(
 
     @Synchronized
     override fun getContactNetworksFromUser(email: String): List<ContactNetwork> {
-        val user = userRepository.findByEmail(email)
-        return user?.contactNetworks?.map { it.contactNetwork }
+        return userRepository.findByEmail(email)?.contactNetworks?.map { it.contactNetwork }
             ?.filter { it.state != ContactNetworkState.Deleted }
             ?: throw UserExceptions.userDataNotFound
     }
 
     @Synchronized
     override fun enableUserAddition(contactNetworkName: String, isEnabled: Boolean) {
-        val contactNetwork = contactNetworkRepository.findContactNetworkByName(contactNetworkName)
-        contactNetwork?.let {
-            it.isVisible = isEnabled
-            contactNetworkRepository.save(contactNetwork)
-        } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
+        contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+            ?.let { contactNetwork ->
+                contactNetwork.isVisible = isEnabled
+                contactNetworkRepository.save(contactNetwork)
+            } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
     }
 
     @Synchronized
     override fun generateAccessCode(contactNetworkName: String): String {
-        val contactNetwork = contactNetworkRepository.findContactNetworkByName(contactNetworkName)
-        return contactNetwork?.let { network ->
-            var accessCode = numberCalculatorService.generateAccessCode()
-            while (contactNetworkRepository.existsContactNetworkByAccessCode(accessCode)) {
-                accessCode = numberCalculatorService.generateAccessCode()
-            }
+        return contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+            ?.let { network ->
+                var accessCode = numberCalculatorService.generateAccessCode()
+                while (contactNetworkRepository.existsContactNetworkByAccessCode(accessCode)) {
+                    accessCode = numberCalculatorService.generateAccessCode()
+                }
 
-            network.accessCode = accessCode
-            contactNetworkRepository.save(network)
-            accessCode
-        } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
+                network.accessCode = accessCode
+                contactNetworkRepository.save(network)
+                accessCode
+            } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
     }
 
     @Synchronized
     override fun getContactNetworkByAccessCode(accessCode: String): ContactNetwork {
-        val contactNetwork = contactNetworkRepository.findContactNetworkByAccessCode(accessCode)
-        return contactNetwork ?: throw ContactNetworkExceptions.invalidAccessCode
+        return contactNetworkRepository.findContactNetworkByAccessCode(accessCode)
+            ?: throw ContactNetworkExceptions.invalidAccessCode
     }
 
     @Synchronized
@@ -80,8 +81,7 @@ class ContactNetworkServiceImpl(
         contactNetworkName: String,
         email: String
     ) {
-        val user = userRepository.findByEmail(email)
-        user?.let { currentUser ->
+        userRepository.findByEmail(email)?.let { currentUser ->
             val member = currentUser.contactNetworks.find {
                 it.contactNetwork.name == contactNetworkName
             }
@@ -90,11 +90,10 @@ class ContactNetworkServiceImpl(
                 throw ContactNetworkExceptions.userAlreadyJoined
             }
 
-            val contactNetwork =
-                contactNetworkRepository.findContactNetworkByName(contactNetworkName)
-            contactNetwork?.let { currentContactNetwork ->
-                addMember(currentUser, currentContactNetwork)
-            } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
+            contactNetworkRepository.findContactNetworkByName(contactNetworkName)
+                ?.let { currentContactNetwork ->
+                    addMember(currentUser, currentContactNetwork)
+                } ?: throw ContactNetworkExceptions.contactNetworkNotExisting
         } ?: throw UserExceptions.userDataNotFound
     }
 
