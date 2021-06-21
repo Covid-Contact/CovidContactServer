@@ -251,7 +251,7 @@ class InteractionServiceImpl(
                         province.cities.add(city)
                     }
 
-                interactions.forEach { interaction -> interaction.cities?.add(city) }
+                interactions.forEach { interaction -> interaction.cities.add(city) }
                 interactionRepository.saveAll(interactions)
                 countryRepository.save(country)
             }

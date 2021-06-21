@@ -22,7 +22,7 @@ data class Interaction(
     var contactNetwork: ContactNetwork? = null,
 
     @Relationship(type = "TAKE_PLACE", direction = Relationship.Direction.INCOMING)
-    var cities: MutableSet<City>? = null
+    var cities: MutableSet<City> = mutableSetOf()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

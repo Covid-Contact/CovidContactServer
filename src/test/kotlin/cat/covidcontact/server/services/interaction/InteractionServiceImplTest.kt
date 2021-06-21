@@ -11,11 +11,12 @@ import cat.covidcontact.server.model.nodes.device.UserDevice
 import cat.covidcontact.server.model.nodes.interaction.Interaction
 import cat.covidcontact.server.model.nodes.interaction.InteractionRepository
 import cat.covidcontact.server.model.nodes.interaction.UserInteraction
-import cat.covidcontact.server.model.nodes.location.CountryRepository
+import cat.covidcontact.server.model.nodes.location.*
 import cat.covidcontact.server.model.nodes.member.Member
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.post.PostRead
+import cat.covidcontact.server.services.location.LocationResponse
 import cat.covidcontact.server.services.location.LocationService
 import cat.covidcontact.server.services.messaging.MessagingService
 import io.mockk.every
@@ -51,10 +52,17 @@ class InteractionServiceImplTest {
     @MockK
     private lateinit var messagingService: MessagingService
 
+    private val countryName = "Spain"
+    private val regionName = "Catalonia"
+    private val provinceName = "Barcelona"
+    private val cityName = "Barcelona"
+
     private lateinit var contactNetworks: List<ContactNetwork>
     private lateinit var users: List<User>
     private lateinit var devices: List<Device>
     private lateinit var reads: List<PostRead>
+    private lateinit var locationResponse: LocationResponse
+    private lateinit var country: Country
 
     @BeforeEach
     fun setUp() {
@@ -150,8 +158,32 @@ class InteractionServiceImplTest {
                 dateTime = LimitParameters.MIN_CONTAGIOUS_DURATION + 1L,
                 lat = null,
                 lon = null
+            ),
+            PostRead(
+                currentDeviceId = devices[0].id,
+                deviceIds = listOf(devices[1].id),
+                dateTime = 1,
+                lat = 1.0,
+                lon = 1.0
             )
         )
+
+        locationResponse = LocationResponse(
+            country = countryName,
+            region = regionName,
+            province = provinceName,
+            city = cityName
+        )
+        country = Country(name = countryName).also { country ->
+            val region = Region(name = regionName).also { region ->
+                val province = Province(name = provinceName).also { province ->
+                    val city = City(name = cityName)
+                    province.cities.add(city)
+                }
+                region.provinces.add(province)
+            }
+            country.regions.add(region)
+        }
     }
 
     @Test
@@ -313,5 +345,27 @@ class InteractionServiceImplTest {
             isEqualTo(LimitParameters.MIN_CONTAGIOUS_DURATION.toLong())
         )
         assertThat(interactionsList.first().isDangerous, isEqualTo(true))
+    }
+
+    @Test
+    fun `when read contains the location then it is added to interaction`() {
+        every { deviceRepository.findDeviceById(devices[0].id) } returns devices[0]
+        every { deviceRepository.findDeviceById(devices[1].id) } returns devices[1]
+        every {
+            interactionRepository.getInteractionsByContactNetworkName(any())
+        } returns emptyList()
+        every { interactionRepository.saveAll(any<List<Interaction>>()) } returns emptyList()
+        every { locationService.getLocationFromCoordinates(any(), any()) } returns locationResponse
+        every { countryRepository.findCountryByName(any()) } returns country
+        every { countryRepository.save(any()) } returns country
+
+        val interactions = interactionServiceImpl.addRead(reads[4])
+
+        val interactionsList = interactions.toList()
+        assertThat(
+            interactions.first().cities.find { city -> city.name == cityName } != null,
+            isEqualTo(true)
+        )
+        assertThat(interactionsList.first().endDateTime, isEqualTo(null))
     }
 }

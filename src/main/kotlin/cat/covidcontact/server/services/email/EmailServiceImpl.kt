@@ -1,12 +1,13 @@
 package cat.covidcontact.server.services.email
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.stereotype.Service
 
 @Service
 class EmailServiceImpl(
-    private val mailSender: JavaMailSenderImpl
+    @Qualifier("provideJavaMailService") private val mailSender: JavaMailSenderImpl
 ) : EmailService {
 
     @Synchronized
