@@ -40,9 +40,6 @@ class InteractionServiceImpl(
             registerInteractionsToContactNetworks(read, currentUserContactNetworks, currentUser)
         }
 
-        println(read.lat)
-        println(read.lon)
-
         if (read.lat != null && read.lon != null) {
             addLocation(read, interactions)
         }
