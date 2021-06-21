@@ -7,14 +7,15 @@ import cat.covidcontact.server.model.authentication.verification.Verification
 import cat.covidcontact.server.model.authentication.verification.VerificationRepository
 import cat.covidcontact.server.services.email.EmailService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.stereotype.Service
 
+@Service
 class ApplicationUserServiceImpl(
     private val emailService: EmailService,
     private val applicationUserRepository: ApplicationUserRepository,
     private val verificationRepository: VerificationRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : ApplicationUserService {
-
     private val codeLength = 50
     private val charset = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
