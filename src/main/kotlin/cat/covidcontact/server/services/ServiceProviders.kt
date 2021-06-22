@@ -6,13 +6,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 
 @Configuration
 class ServiceProviders {
+    private val noReplyPassword = System.getenv("COVID_CONTACT_NO_REPLY")
 
     @Bean
     fun provideJavaMailService(): JavaMailSenderImpl = JavaMailSenderImpl().apply {
         host = "smtp.gmail.com"
         port = 587
         username = "noreply.covidcontact@gmail.com"
-        password = System.getenv("COVID_CONTACT_NO_REPLY")
+        password = noReplyPassword
         javaMailProperties.let { props ->
             props["mail.transport.protocol"] = "smtp"
             props["mail.smtp.auth"] = "true"
