@@ -1,5 +1,6 @@
 package cat.covidcontact.server.security
 
+import cat.covidcontact.server.controllers.statistics.StatisticsControllerUrls
 import cat.covidcontact.server.controllers.user.UserControllerUrls
 import cat.covidcontact.server.services.UserDetailServiceImpl
 import org.springframework.context.annotation.Bean
@@ -37,7 +38,9 @@ class WebSecurity(
             .antMatchers(
                 HttpMethod.GET,
                 UserControllerUrls.BASE + UserControllerUrls.VALIDATE,
-                UserControllerUrls.BASE + UserControllerUrls.VALIDATED
+                UserControllerUrls.BASE + UserControllerUrls.VALIDATED,
+                StatisticsControllerUrls.BASE + StatisticsControllerUrls.USER_INTERACTIONS,
+                StatisticsControllerUrls.BASE + StatisticsControllerUrls.LOCATION_INTERACTIONS
             )
             .permitAll()
             .anyRequest().authenticated()

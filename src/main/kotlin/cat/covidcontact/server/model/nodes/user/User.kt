@@ -10,10 +10,10 @@ import java.io.Serializable
 @Node
 data class User(
     @Id
-    val email: String,
-    var username: String,
-    val gender: Gender,
-    val birthDate: Long,
+    val email: String = "",
+    var username: String = "",
+    val gender: Gender = Gender.Other,
+    val birthDate: Long = 0,
     var studies: String? = null,
     var occupation: Occupation? = null,
     var marriage: Marriage? = null,

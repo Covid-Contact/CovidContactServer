@@ -1,45 +1,98 @@
 package cat.covidcontact.server.services.location
 
-import cat.covidcontact.server.services.interaction.geocoding.AddressComponentsResponse
-import cat.covidcontact.server.services.interaction.geocoding.GeocodingResponse
+import cat.covidcontact.server.services.location.nominatim.NominatimAddress
+import cat.covidcontact.server.services.location.nominatim.NominatimResponse
+import cat.covidcontact.server.services.location.nominatim.NominatimSearchResult
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.stereotype.Service
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.util.*
 
+@Service
 class LocationServiceImpl : LocationService {
     private val restTemplate = RestTemplateBuilder().build()
-    private val baseUrl = "https://maps.googleapis.com/maps/api/geocode/json"
-    private val geocodingKey = System.getenv("COVID_CONTACT_MAPS_KEY")
-    private val language = "en"
+
+    private val nominatimBaseUrl = "https://nominatim.openstreetmap.org"
+    private val nominatimSearchUrl = "$nominatimBaseUrl/search.php"
+    private val nominatimReverseUrl = "$nominatimBaseUrl/reverse.php"
+
+    private val accents = mapOf(
+        "à" to "a", "á" to "a", "â" to "a",
+        "è" to "e", "é" to "e", "ê" to "e",
+        "ì" to "i", "í" to "i", "î" to "i",
+        "ò" to "o", "ó" to "o", "ô" to "o",
+        "ù" to "u", "ú" to "u", "û" to "u"
+    )
 
     override fun getLocationFromCoordinates(lat: Double, lon: Double): LocationResponse {
-        val latLng = "$lat,$lon"
-        val url = "$baseUrl?latlng=$latLng&key=$geocodingKey&language=$language"
-        return parseLocationResponse(url)
+        val url = "$nominatimReverseUrl?lat=$lat&lon=$lon&format=jsonv2"
+        return parseNominatimLocationResponse(url)
     }
 
     override fun getLocationFromName(name: String): LocationResponse {
-        val url = "$baseUrl?address=$name&key=$geocodingKey&language=$language"
-        return parseLocationResponse(url)
+        val encodedName = URLEncoder.encode(name.removeAccents(), StandardCharsets.UTF_8)
+        val url = "$nominatimSearchUrl?q=$encodedName&format=jsonv2"
+        println(name.removeAccents())
+        val response = restTemplate.getForObject(url, String::class.java)!!
+        val result = Gson().fromJson<List<NominatimSearchResult>>(response).first { actualResult ->
+            actualResult.type == "administrative"
+        }
+
+        return if (result.lat != null && result.lon != null) {
+            getLocationFromCoordinates(result.lat!!.toDouble(), result.lon!!.toDouble())
+        } else {
+            LocationResponse(null, null, null, null)
+        }
     }
 
-    private fun parseLocationResponse(url: String): LocationResponse {
-        val response = restTemplate.getForObject(url, GeocodingResponse::class.java)
-        val addressComponents = response?.result?.first()?.addressComponents
+    private fun parseNominatimLocationResponse(url: String): LocationResponse {
+        val response = restTemplate.getForObject(url, NominatimResponse::class.java)
+        val address = response?.address
 
-        val countryName = addressComponents?.findComponent(COUNTRY)
-        val regionName = addressComponents?.findComponent(REGION)
-        val provinceName = addressComponents?.findComponent(PROVINCE)
-        val cityName = addressComponents?.findComponent(CITY)
-
-        return LocationResponse(countryName, regionName, provinceName, cityName)
+        return LocationResponse(
+            country = address?.country,
+            region = address?.state,
+            province = getProvince(address),
+            city = getCity(address)
+        )
     }
 
-    private fun List<AddressComponentsResponse>.findComponent(type: String): String? =
-        find { component -> component.types.contains(type) }?.longName
+    private fun getProvince(address: NominatimAddress?): String? {
+        return address?.let { currentAddress ->
+            if (currentAddress.county != null) {
+                currentAddress.county!!.split(" ").first()
+            } else {
+                currentAddress.municipality
+            }
+        }
+    }
 
-    companion object {
-        private const val COUNTRY = "country"
-        private const val REGION = "administrative_area_level_1"
-        private const val PROVINCE = "administrative_area_level_2"
-        private const val CITY = "locality"
+    private fun getCity(address: NominatimAddress?): String? {
+        return address?.let { currentAddress ->
+            when {
+                currentAddress.city != null -> currentAddress.city
+                currentAddress.town != null -> currentAddress.town
+                else -> currentAddress.village
+            }
+        }
+    }
+
+    private inline fun <reified T> Gson.fromJson(json: String) =
+        fromJson<T>(json, object : TypeToken<T>() {}.type)
+
+    private fun String.removeAccents(): String {
+        var result = this
+        accents.forEach { (accent, withoutAccent) ->
+            result = result.replace(accent, withoutAccent)
+                .replace(
+                    accent.toUpperCase(Locale.getDefault()),
+                    withoutAccent.toUpperCase(Locale.getDefault())
+                )
+        }
+
+        return result.replace("'", "")
     }
 }

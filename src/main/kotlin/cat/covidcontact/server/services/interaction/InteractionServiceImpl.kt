@@ -14,12 +14,13 @@ import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.nodes.user.UserRepository
 import cat.covidcontact.server.model.nodes.user.UserState
 import cat.covidcontact.server.model.post.PostRead
-import cat.covidcontact.server.services.interaction.geocoding.AddressComponentsResponse
 import cat.covidcontact.server.services.location.LocationService
 import cat.covidcontact.server.services.messaging.MessagingService
+import org.springframework.stereotype.Service
 import kotlin.math.max
 import kotlin.math.min
 
+@Service
 class InteractionServiceImpl(
     private val deviceRepository: DeviceRepository,
     private val interactionRepository: InteractionRepository,
@@ -31,8 +32,8 @@ class InteractionServiceImpl(
 ) : InteractionService {
 
     @Synchronized
-    override fun addRead(read: PostRead) {
-        val currentUser = getUserFromDevice(read.currentDeviceId) ?: return
+    override fun addRead(read: PostRead): Set<Interaction> {
+        val currentUser = getUserFromDevice(read.currentDeviceId) ?: return emptySet()
         val currentUserContactNetworks = currentUser.getContactNetworks()
 
         val interactions = if (read.deviceIds.isEmpty()) {
@@ -44,6 +45,8 @@ class InteractionServiceImpl(
         if (read.lat != null && read.lon != null) {
             addLocation(read, interactions)
         }
+
+        return interactions
     }
 
     @Synchronized
@@ -69,11 +72,11 @@ class InteractionServiceImpl(
                     contactNetworkRepository.save(contactNetwork)
                 }
 
-                val nearContacts = interactions.getAllUsers()
+                val closeContacts = interactions.getAllUsers()
                 val users = userRepository.getAllMembersFromContactNetwork(contactNetwork.name)
                     .onEach { user ->
                         user.state = when (user) {
-                            in nearContacts -> UserState.Quarantine
+                            in closeContacts -> UserState.Quarantine
                             else -> UserState.Prevention
                         }
 
@@ -103,8 +106,8 @@ class InteractionServiceImpl(
                 finishUserSending(interaction, user, read)
             }
 
-            val savedInteractions = interactionRepository.saveAll(interactions)
-            currentInteractions.addAll(savedInteractions)
+            interactionRepository.saveAll(interactions)
+            currentInteractions.addAll(interactions)
         }
 
         return currentInteractions
@@ -173,7 +176,8 @@ class InteractionServiceImpl(
             updateInteraction(interaction, user)
         }
 
-        return interactionRepository.saveAll(interactions)
+        interactionRepository.saveAll(interactions)
+        return interactions
     }
 
     private fun updateInteraction(interaction: Interaction, user: User) {
@@ -204,7 +208,7 @@ class InteractionServiceImpl(
     private fun getUserFromDevice(deviceId: String): User? {
         val device = deviceRepository.findDeviceById(deviceId)
             ?: throw InteractionExceptions.deviceNotFound
-        return device.users.find { it.isLogged }?.user
+        return device.users.find { userDevice -> userDevice.isLogged }?.user
     }
 
     private fun sendCurrentState(user: User) {
@@ -247,17 +251,15 @@ class InteractionServiceImpl(
                         province.cities.add(city)
                     }
 
-                city.interactions.addAll(interactions)
+                interactions.forEach { interaction -> interaction.cities.add(city) }
+                interactionRepository.saveAll(interactions)
                 countryRepository.save(country)
             }
         }
     }
 
-    private fun List<AddressComponentsResponse>.findComponent(type: String): String? =
-        find { component -> component.types.contains(type) }?.longName
-
     private fun User.getContactNetworks(): List<ContactNetwork> =
-        contactNetworks.map { it.contactNetwork }
+        contactNetworks.map { member -> member.contactNetwork }
 
     private fun List<Interaction>.getNotEndedUserInteractions(
         user: User

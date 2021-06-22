@@ -1,10 +1,14 @@
 package cat.covidcontact.server.services.email
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSenderImpl
+import org.springframework.stereotype.Service
 
-
-class EmailServiceImpl(private val mailSender: JavaMailSenderImpl) : EmailService {
+@Service
+class EmailServiceImpl(
+    @Qualifier("provideJavaMailService") private val mailSender: JavaMailSenderImpl
+) : EmailService {
 
     @Synchronized
     override fun sendConfirmationEmail(destination: String, validationCode: String) {

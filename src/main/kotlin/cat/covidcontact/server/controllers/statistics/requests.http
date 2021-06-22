@@ -1,0 +1,31 @@
+GET http://localhost:8080/statistics/user/interactions
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=18
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=50
+
+###
+GET http://localhost:8080/statistics/user/interactions?to=50
+
+###
+GET http://localhost:8080/statistics/user/interactions?to=18
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=18&to=30
+
+###
+GET http://localhost:8080/statistics/user/interactions?from=18&to=30&gender=Male
+
+###
+GET http://localhost:8080/statistics/location/interactions?country=España
+
+###
+GET http://localhost:8080/statistics/location/interactions?region=Catalunya
+
+###
+GET http://localhost:8080/statistics/location/interactions?province=Barcelona
+
+###
+GET http://localhost:8080/statistics/location/durations?country=Spain

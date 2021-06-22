@@ -5,7 +5,9 @@ import cat.covidcontact.server.model.nodes.device.DeviceRepository
 import cat.covidcontact.server.model.nodes.device.UserDevice
 import cat.covidcontact.server.model.nodes.user.User
 import cat.covidcontact.server.model.post.PostDevice
+import org.springframework.stereotype.Service
 
+@Service
 class DeviceServiceImpl(
     private val deviceRepository: DeviceRepository
 ) : DeviceService {
@@ -41,7 +43,6 @@ class DeviceServiceImpl(
             )
         )
 
-        println(deviceNode.users.map { it.user.email })
         deviceRepository.save(deviceNode)
     }
 }
