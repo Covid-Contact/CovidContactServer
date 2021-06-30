@@ -89,12 +89,14 @@ class InteractionServiceImpl(
                     contactNetworkRepository.save(contactNetwork)
                 }
 
-                val closeContacts = interactions.getAllUsers()
+                val closeContacts = interactions.getAllUsers().map { user -> user.email }
                 val users = userRepository.getAllMembersFromContactNetwork(contactNetwork.name)
                     .onEach { user ->
-                        user.state = when (user) {
-                            in closeContacts -> UserState.Quarantine
-                            else -> UserState.Prevention
+                        if (user.state != UserState.Quarantine) {
+                            user.state = when (user.email) {
+                                in closeContacts -> UserState.Quarantine
+                                else -> UserState.Prevention
+                            }
                         }
 
                         sendingUsers.add(user)
@@ -103,7 +105,9 @@ class InteractionServiceImpl(
                 userRepository.saveAll(users)
             }
 
-            sendingUsers.forEach { user -> sendCurrentState(user) }
+            sendingUsers.forEach { user ->
+                sendCurrentState(user)
+            }
         } ?: throw InteractionExceptions.userNotFound
     }
 
