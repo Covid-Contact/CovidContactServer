@@ -32,6 +32,10 @@ class MessagingServiceImpl(
             .setToken(token.decrypt())
             .putData(key, data)
             .build()
-        firebaseMessaging.send(message)
+
+        try {
+            firebaseMessaging.send(message)
+        } catch (e: Exception) {
+        }
     }
 }
